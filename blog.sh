@@ -17,6 +17,7 @@ SITE_LINK_2_URL="$(cat ./config.json | jq -r .links[3])"
 create_site() {
   [[ -z "$(which smu)" ]] && echo "smu is not installed! Please install it from https://git.codemadness.org/smu/" && exit 1
   [[ -z "$(which jq)" ]] && echo "jq is not installed! Please install it from your package repo!" && exit 1
+  [[ ! -f "config.json" ]] && echo "You don't have a config.json file!" && exit 1
   mkdir -p "$SITE_NAME/content"
   mkdir -p "$SITE_NAME/assets"
   mkdir -p "$SITE_NAME/pages"
@@ -54,15 +55,15 @@ EOF
 
 > Before you proceed on reading all of this yappanese
 >
-> - All variables are defined inside the script, any modifications you may want to add need to be done there.
+> - All variables are defined inside a \`config.json\` file.
 > - You **NEED** to have \`smu\` installed. it is a simple program that converts a Markdown-like file to HTML, and it is used by this script. You can clone it from git://git.codemadness.org/smu
 
-To create a site, first, modify the \`SITE_NAME\` variable, and then, just type
+To create a site, first, modify the \`name\` key inside the \`config.json\` file, and then, just type
 
-    blog.sh new
+    blog.sh create
 
-This will create a directory with the name specified on the \`SITE_NAME\`
-variable with the directory structure used by \`blog.sh\`.
+This will create a directory with the name specified on the \`name\`
+key with the directory structure used by \`blog.sh\`.
 
 The posts are located in the \`content\` directory, the names of each files
 needs to be like the following:
@@ -80,7 +81,44 @@ filename, instead, the title itself is basically a file extension. The reason
 for it is that it was easier for my smooth brain to write something that parsed
 the filenames without any issues.
 
+## There's one more thing
+
+There are 2 more commands:
+
+- \`serve\`
+- \`stop\`
+
+The \`serve\` command uses \`python -m http.server\` to create a server that you
+can use to preview your site on your local machine. It also uses \`entr\` to see
+changes made inside the \`content\` directory, and if there are any changes, it
+rebuilds the website.
+
+## The config.json file
+
+Yeah... I'm using json to configure this thing, idk, it's easier to just use \`jq\`
+and don't think much about it.
+
+The config looks like this:
+
+    {
+      "name": "foo",
+      "author": "bar",
+      "lang": "en-us",
+      "description": "<p>lorem ipsum</p>",
       "note": "You could've just used jekyll or Hugo, you know that, right?",
+      "favicon": [
+        "fav",
+        "webp"
+      ],
+      "links": [
+        "title_1", "https://url.1",
+        "title_2", "https://url.2"
+      ]
+    }
+
+If you don't have a \`config.json\` file on the directory that you're currently,
+then you won't be able to use the \`create\` command.
+
 ## smu syntax
 
 Wellll..... If you have already used Markdown, then you are at home... But not quite.
