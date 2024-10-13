@@ -6,6 +6,7 @@ SITE_NAME=$(cat ./config.json | jq -r .name)
 SITE_LANG="$(cat ./config.json | jq -r .lang)"
 SITE_AUTHOR="$(cat ./config.json | jq -r .author)"
 SITE_DESCRIPTION="$(cat ./config.json | jq -r .description)"
+SITE_NOTE="$(cat ./config.json | jq -r .note)"
 SITE_FAVICON_NAME="$(cat ./config.json | jq -r .favicon[0])"
 SITE_FAVICON_TYPE="$(cat ./config.json | jq -r .favicon[1])"
 SITE_LINK_1_NAME="$(cat ./config.json | jq -r .links[0])"
@@ -79,6 +80,7 @@ filename, instead, the title itself is basically a file extension. The reason
 for it is that it was easier for my smooth brain to write something that parsed
 the filenames without any issues.
 
+      "note": "You could've just used jekyll or Hugo, you know that, right?",
 ## smu syntax
 
 Wellll..... If you have already used Markdown, then you are at home... But not quite.
@@ -135,7 +137,7 @@ build_site() {
   cat ./pages/head.html > index.html
   echo "<h1>$SITE_NAME</h1>" >> index.html
   echo "<h4><a href=\"$SITE_LINK_1_URL\">$SITE_LINK_1_NAME</a> <a href=\"$SITE_LINK_2_URL\">$SITE_LINK_2_NAME</a></h4>" >> index.html
-  echo "<h4><i>Feito com <3 usando o <a href=\"https://codeberg.org/tukain/blog.sh\">blog.sh</a></i></h4>" >> index.html
+  echo "<h4><i>${SITE_NOTE}</i></h4>" >> index.html
   [[ ! -z "$SITE_DESCRIPTION" ]] && echo "<p>${SITE_DESCRIPTION}</p>" >> index.html
   echo "<h2>Posts</h2>" >> index.html
   echo "<ul>" >> index.html
