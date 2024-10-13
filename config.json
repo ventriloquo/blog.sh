@@ -3,6 +3,7 @@
   "author": "bar",
   "lang": "en-us",
   "description": "<p>lorem ipsum</p>",
+  "note": "You could've just used jekyll or Hugo, you know that, right?",
   "favicon": [
     "fav",
     "webp"
