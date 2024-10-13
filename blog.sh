@@ -64,7 +64,6 @@ needs to be like the following:
 
     9999.some-post-name
 
-They are organized in decresent order, that is \`9998.foo\` will be placed
 above \`9999.bar\`.
 
 > You don't need to worry about the numbers, they are just for organization
