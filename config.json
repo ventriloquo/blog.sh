@@ -1,0 +1,14 @@
+{
+  "name": "foo",
+  "author": "bar",
+  "lang": "en-us",
+  "description": "<p>lorem ipsum</p>",
+  "favicon": [
+    "fav",
+    "webp"
+  ],
+  "links": [
+    "Neocities", "https://neocities.org/site/tukainpng",
+    "Codeberg", "https://codeberg.org/tukain"
+  ]
+}

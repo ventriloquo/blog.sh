@@ -2,22 +2,26 @@
 
 # DON'T CHANGE THIS
 INPUT=$1
-
-# Variables
-SITE_NAME="foo"
-SITE_LANG="en-us"
-SITE_AUTHOR="bar"
-SITE_DESCRIPTION="<h2>A <s>simple</s> shitty Static Site Generator</h2><img src='/assets/img/what.webp'>"
-SITE_FAVICON_NAME="fav"
-SITE_FAVICON_TYPE="webp"
+SITE_NAME=$(cat ./config.json | jq -r .name)
+SITE_LANG="$(cat ./config.json | jq -r .lang)"
+SITE_AUTHOR="$(cat ./config.json | jq -r .author)"
+SITE_DESCRIPTION="$(cat ./config.json | jq -r .description)"
+SITE_FAVICON_NAME="$(cat ./config.json | jq -r .favicon[0])"
+SITE_FAVICON_TYPE="$(cat ./config.json | jq -r .favicon[1])"
+SITE_LINK_1_NAME="$(cat ./config.json | jq -r .links[0])"
+SITE_LINK_1_URL="$(cat ./config.json | jq -r .links[1])"
+SITE_LINK_2_NAME="$(cat ./config.json | jq -r .links[2])"
+SITE_LINK_2_URL="$(cat ./config.json | jq -r .links[3])"
 
 create_site() {
-  [[ -z "$(which smu)" ]] && echo "smu is not installed! Please install it from http://git.codemadness.org/smu/"
+  [[ -z "$(which smu)" ]] && echo "smu is not installed! Please install it from https://git.codemadness.org/smu/" && exit 1
+  [[ -z "$(which jq)" ]] && echo "jq is not installed! Please install it from your package repo!" && exit 1
   mkdir -p "$SITE_NAME/content"
   mkdir -p "$SITE_NAME/assets"
   mkdir -p "$SITE_NAME/pages"
   mkdir -p "$SITE_NAME/public"
   touch "$SITE_NAME/.site"
+  cp ./config.json "$SITE_NAME"
   cat << EOF > "$SITE_NAME/pages/head.html"
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -64,6 +68,7 @@ needs to be like the following:
 
     9999.some-post-name
 
+They are organized in descending order, that is \`9998.foo\` will be placed
 above \`9999.bar\`.
 
 > You don't need to worry about the numbers, they are just for organization
@@ -129,8 +134,8 @@ build_site() {
 
   cat ./pages/head.html > index.html
   echo "<h1>$SITE_NAME</h1>" >> index.html
-  echo "<h4><a href=\"https://neocities.org/site/tukainpng\">Neocities</a> <a href=\"https://codeberg.org/tukain\">Codeberg</a></h4>" >> index.html
-  echo "<h4><i>Made with <a href=\"https://codeberg.org/tukain/blog.sh\">blog.sh</a></i></h4>" >> index.html
+  echo "<h4><a href=\"$SITE_LINK_1_URL\">$SITE_LINK_1_NAME</a> <a href=\"$SITE_LINK_2_URL\">$SITE_LINK_2_NAME</a></h4>" >> index.html
+  echo "<h4><i>Feito com <3 usando o <a href=\"https://codeberg.org/tukain/blog.sh\">blog.sh</a></i></h4>" >> index.html
   [[ ! -z "$SITE_DESCRIPTION" ]] && echo "<p>${SITE_DESCRIPTION}</p>" >> index.html
   echo "<h2>Posts</h2>" >> index.html
   echo "<ul>" >> index.html
@@ -146,6 +151,26 @@ build_site() {
   cp -r ./assets ./public
 }
 
+serve_site() {
+  if [[ -z "$(which entr)" ]]; then
+    echo "Please install entr to be able to use this command"
+    exit 1
+  fi
+
+  if [[ -z "$(which python)" ]]; then
+    echo "Please install python to be able to use this command"
+    exit 1
+  fi
+
+  /bin/ls content/* | entr -p blog.sh build &
+  python -m http.server -d public/ &
+}
+
+stop_server() {
+  killall python
+  killall entr
+}
+
 version() {
   printf "\e[32mblog.sh \e[34m(v0.0.0)\e[0m\n"
 }
@@ -153,14 +178,18 @@ version() {
 case $INPUT in
   "build") build_site;;
   "create") create_site;;
+  "serve") serve_site;;
+  "stop") stop_server;;
   "version") version;;
   *) cat << EOF
 
 Usage: blog.sh <command>
 
 version - shows blog.sh version
+create  - create the website structure
 build   - build the website
-create  - create the website file structure
+serve   - start a server
+stop    - stop the server
 
 EOF
 ;;
