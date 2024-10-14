@@ -114,10 +114,15 @@ h1 {
 }
 
 h1,
-h4 {
+#links,
+#note {
     margin-top: 0.5em;
     margin-bottom: 0.5em;
     text-align: center;
+}
+
+#note {
+    margin-bottom: 2em;
 }
 
 h2,
@@ -125,9 +130,6 @@ h3 {
     border-bottom: var(--border);
 }
 
-h4:has(i) {
-    margin-bottom: 2em;
-}
 
 img {
     max-height: 400px;
