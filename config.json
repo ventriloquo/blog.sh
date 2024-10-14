@@ -2,12 +2,12 @@
   "name": "foo",
   "author": "bar",
   "lang": "en-us",
-  "description": "<p>lorem ipsum</p>",
+  "description": "lorem ipsum",
   "note": "You could've just used jekyll or Hugo, you know that, right?",
-  "favicon": [
-    "fav",
-    "webp"
-  ],
+  "favicon": {
+    "filename": "fav",
+    "extension": "webp"
+  },
   "links": [
     "Neocities", "https://neocities.org/site/tukainpng",
     "Codeberg", "https://codeberg.org/tukain"
