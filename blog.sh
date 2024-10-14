@@ -7,12 +7,18 @@ SITE_LANG="$(cat ./config.json | jq -r .lang)"
 SITE_AUTHOR="$(cat ./config.json | jq -r .author)"
 SITE_DESCRIPTION="$(cat ./config.json | jq -r .description)"
 SITE_NOTE="$(cat ./config.json | jq -r .note)"
-SITE_FAVICON_NAME="$(cat ./config.json | jq -r .favicon[0])"
-SITE_FAVICON_TYPE="$(cat ./config.json | jq -r .favicon[1])"
+SITE_FAVICON_NAME="$(cat ./config.json | jq -r .favicon.filename)"
+SITE_FAVICON_TYPE="$(cat ./config.json | jq -r .favicon.extension)"
 SITE_LINK_1_NAME="$(cat ./config.json | jq -r .links[0])"
 SITE_LINK_1_URL="$(cat ./config.json | jq -r .links[1])"
 SITE_LINK_2_NAME="$(cat ./config.json | jq -r .links[2])"
 SITE_LINK_2_URL="$(cat ./config.json | jq -r .links[3])"
+SITE_LINK_3_NAME="$(cat ./config.json | jq -r .links[4])"
+SITE_LINK_3_URL="$(cat ./config.json | jq -r .links[5])"
+SITE_LINK_4_NAME="$(cat ./config.json | jq -r .links[6])"
+SITE_LINK_4_URL="$(cat ./config.json | jq -r .links[7])"
+SITE_LINK_5_NAME="$(cat ./config.json | jq -r .links[8])"
+SITE_LINK_5_URL="$(cat ./config.json | jq -r .links[9])"
 
 create_site() {
   [[ -z "$(which smu)" ]] && echo "smu is not installed! Please install it from https://git.codemadness.org/smu/" && exit 1
@@ -104,15 +110,15 @@ The config looks like this:
       "name": "foo",
       "author": "bar",
       "lang": "en-us",
-      "description": "<p>lorem ipsum</p>",
+      "description": "lorem ipsum",
       "note": "You could've just used jekyll or Hugo, you know that, right?",
-      "favicon": [
-        "fav",
-        "webp"
-      ],
+      "favicon": {
+        "filename": "fav",
+        "extension": "webp"
+      },
       "links": [
-        "title_1", "https://url.1",
-        "title_2", "https://url.2"
+        "Neocities", "https://neocities.org/site/tukainpng",
+        "Codeberg", "https://codeberg.org/tukain"
       ]
     }
 
@@ -173,9 +179,15 @@ build_site() {
   done
 
   cat ./pages/head.html > index.html
-  echo "<h1>$SITE_NAME</h1>" >> index.html
-  echo "<h4><a href=\"$SITE_LINK_1_URL\">$SITE_LINK_1_NAME</a> <a href=\"$SITE_LINK_2_URL\">$SITE_LINK_2_NAME</a></h4>" >> index.html
-  echo "<h4><i>${SITE_NOTE}</i></h4>" >> index.html
+  echo "<h1 id=\"title\">$SITE_NAME</h1>" >> index.html
+  echo "<h4 id=\"links\">" >> index.html
+    [[ ! "$SITE_LINK_1_URL" == "null" ]] && echo "<a href=\"$SITE_LINK_1_URL\">$SITE_LINK_1_NAME</a>" >> index.html
+    [[ ! "$SITE_LINK_2_URL" == "null" ]] && echo "<a href=\"$SITE_LINK_2_URL\">$SITE_LINK_2_NAME</a>" >> index.html
+    [[ ! "$SITE_LINK_3_URL" == "null" ]] && echo "<a href=\"$SITE_LINK_3_URL\">$SITE_LINK_3_NAME</a>" >> index.html
+    [[ ! "$SITE_LINK_4_URL" == "null" ]] && echo "<a href=\"$SITE_LINK_4_URL\">$SITE_LINK_4_NAME</a>" >> index.html
+    [[ ! "$SITE_LINK_5_URL" == "null" ]] && echo "<a href=\"$SITE_LINK_5_URL\">$SITE_LINK_5_NAME</a>" >> index.html
+  echo "</h4>" >> index.html
+  echo "<h4 id=\"note\"><i>${SITE_NOTE}</i></h4>" >> index.html
   [[ ! -z "$SITE_DESCRIPTION" ]] && echo "<p>${SITE_DESCRIPTION}</p>" >> index.html
   echo "<h2>Posts</h2>" >> index.html
   echo "<ul>" >> index.html
