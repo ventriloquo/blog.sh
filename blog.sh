@@ -179,7 +179,7 @@ build_site() {
   done
 
   cat ./pages/head.html > index.html
-  echo "<h1 id=\"title\">$SITE_NAME</h1>" >> index.html
+  echo "<h1>$SITE_NAME</h1>" >> index.html
   echo "<h4 id=\"links\">" >> index.html
     [[ ! "$SITE_LINK_1_URL" == "null" ]] && echo "<a href=\"$SITE_LINK_1_URL\">$SITE_LINK_1_NAME</a>" >> index.html
     [[ ! "$SITE_LINK_2_URL" == "null" ]] && echo "<a href=\"$SITE_LINK_2_URL\">$SITE_LINK_2_NAME</a>" >> index.html
