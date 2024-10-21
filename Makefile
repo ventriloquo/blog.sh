@@ -1,3 +1,3 @@
 all:
 	./blog.sh create
-	cp -r assets foo
+	./blog.sh build

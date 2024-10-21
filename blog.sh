@@ -24,13 +24,12 @@ create_site() {
   [[ -z "$(which smu)" ]] && echo "smu is not installed! Please install it from https://git.codemadness.org/smu/" && exit 1
   [[ -z "$(which jq)" ]] && echo "jq is not installed! Please install it from your package repo!" && exit 1
   [[ ! -f "config.json" ]] && echo "You don't have a config.json file!" && exit 1
-  mkdir -p "$SITE_NAME/content"
-  mkdir -p "$SITE_NAME/assets"
-  mkdir -p "$SITE_NAME/pages"
-  mkdir -p "$SITE_NAME/public"
-  touch "$SITE_NAME/.site"
-  cp ./config.json "$SITE_NAME"
-  cat << EOF > "$SITE_NAME/pages/head.html"
+  mkdir -p "content"
+  mkdir -p "assets"
+  mkdir -p "pages"
+  mkdir -p "public"
+  touch ".site"
+  cat << EOF > "pages/head.html"
 <!DOCTYPE html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -46,21 +45,21 @@ create_site() {
 <body>
 EOF
 
-echo "<header><nav><ul><li><a href=\"/\">Blog</a></li></ul><ul>" > "$SITE_NAME/pages/navbar.html"
-  [[ ! "$SITE_LINK_1_URL" == "null" ]] && echo "<li><a href=\"$SITE_LINK_1_URL\">[$SITE_LINK_1_NAME]</a> </li>" >> "$SITE_NAME/pages/navbar.html"
-  [[ ! "$SITE_LINK_2_URL" == "null" ]] && echo "<li><a href=\"$SITE_LINK_2_URL\">[$SITE_LINK_2_NAME]</a> </li>" >> "$SITE_NAME/pages/navbar.html"
-  [[ ! "$SITE_LINK_3_URL" == "null" ]] && echo "<li><a href=\"$SITE_LINK_3_URL\">[$SITE_LINK_3_NAME]</a> </li>" >> "$SITE_NAME/pages/navbar.html"
-  [[ ! "$SITE_LINK_4_URL" == "null" ]] && echo "<li><a href=\"$SITE_LINK_4_URL\">[$SITE_LINK_4_NAME]</a> </li>" >> "$SITE_NAME/pages/navbar.html"
-  [[ ! "$SITE_LINK_5_URL" == "null" ]] && echo "<li><a href=\"$SITE_LINK_5_URL\">[$SITE_LINK_5_NAME]</a> </li>" >> "$SITE_NAME/pages/navbar.html"
-echo "</ul></nav></header>" >> "$SITE_NAME/pages/navbar.html"
+echo "<header><nav><ul><li><a href=\"/\">Blog</a></li></ul><ul>" > "pages/navbar.html"
+  [[ ! "$SITE_LINK_1_URL" == "null" ]] && echo "<li><a href=\"$SITE_LINK_1_URL\">[$SITE_LINK_1_NAME]</a> </li>" >> "pages/navbar.html"
+  [[ ! "$SITE_LINK_2_URL" == "null" ]] && echo "<li><a href=\"$SITE_LINK_2_URL\">[$SITE_LINK_2_NAME]</a> </li>" >> "pages/navbar.html"
+  [[ ! "$SITE_LINK_3_URL" == "null" ]] && echo "<li><a href=\"$SITE_LINK_3_URL\">[$SITE_LINK_3_NAME]</a> </li>" >> "pages/navbar.html"
+  [[ ! "$SITE_LINK_4_URL" == "null" ]] && echo "<li><a href=\"$SITE_LINK_4_URL\">[$SITE_LINK_4_NAME]</a> </li>" >> "pages/navbar.html"
+  [[ ! "$SITE_LINK_5_URL" == "null" ]] && echo "<li><a href=\"$SITE_LINK_5_URL\">[$SITE_LINK_5_NAME]</a> </li>" >> "pages/navbar.html"
+echo "</ul></nav></header>" >> "pages/navbar.html"
 
-  cat << EOF > "$SITE_NAME/pages/footer.html"
+  cat << EOF > "pages/footer.html"
 </article>
 </body>
 <footer><p>Made with <a href="https://codeberg.org/tukain/blog.sh">blog.sh</a></p></footer>
 EOF
 
-  cat << EOF > "$SITE_NAME/content/deleteme"
+  cat << EOF > "content/deleteme"
 # blog.sh
 
 <center>A <s>simple</s> shitty Static Site Generator writen in bash.</center>
