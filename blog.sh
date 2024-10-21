@@ -31,6 +31,7 @@ create_site() {
   touch "$SITE_NAME/.site"
   cp ./config.json "$SITE_NAME"
   cat << EOF > "$SITE_NAME/pages/head.html"
+<!DOCTYPE html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <meta http-equiv="Content-Language" content="${SITE_LANG}" />
@@ -43,8 +44,15 @@ create_site() {
   <title>${SITE_NAME}</title>
 </head>
 <body>
-<article>
 EOF
+
+echo "<header><nav><ul><li><a href=\"/\">Blog</a></li></ul><ul>" > "$SITE_NAME/pages/navbar.html"
+  [[ ! "$SITE_LINK_1_URL" == "null" ]] && echo "<li><a href=\"$SITE_LINK_1_URL\">[$SITE_LINK_1_NAME]</a> </li>" >> "$SITE_NAME/pages/navbar.html"
+  [[ ! "$SITE_LINK_2_URL" == "null" ]] && echo "<li><a href=\"$SITE_LINK_2_URL\">[$SITE_LINK_2_NAME]</a> </li>" >> "$SITE_NAME/pages/navbar.html"
+  [[ ! "$SITE_LINK_3_URL" == "null" ]] && echo "<li><a href=\"$SITE_LINK_3_URL\">[$SITE_LINK_3_NAME]</a> </li>" >> "$SITE_NAME/pages/navbar.html"
+  [[ ! "$SITE_LINK_4_URL" == "null" ]] && echo "<li><a href=\"$SITE_LINK_4_URL\">[$SITE_LINK_4_NAME]</a> </li>" >> "$SITE_NAME/pages/navbar.html"
+  [[ ! "$SITE_LINK_5_URL" == "null" ]] && echo "<li><a href=\"$SITE_LINK_5_URL\">[$SITE_LINK_5_NAME]</a> </li>" >> "$SITE_NAME/pages/navbar.html"
+echo "</ul></nav></header>" >> "$SITE_NAME/pages/navbar.html"
 
   cat << EOF > "$SITE_NAME/pages/footer.html"
 </article>
@@ -52,17 +60,17 @@ EOF
 <footer><p>Made with <a href="https://codeberg.org/tukain/blog.sh">blog.sh</a></p></footer>
 EOF
 
-  cat << EOF > "$SITE_NAME/content/9999.readme"
+  cat << EOF > "$SITE_NAME/content/deleteme"
 # blog.sh
 
 <center>A <s>simple</s> shitty Static Site Generator writen in bash.</center>
-
-## How to use
 
 > Before you proceed on reading all of this yappanese
 >
 > - All variables are defined inside a \`config.json\` file.
 > - You **NEED** to have \`smu\` installed. it is a simple program that converts a Markdown-like file to HTML, and it is used by this script. You can clone it from git://git.codemadness.org/smu
+
+## How to use
 
 To create a site, first, modify the \`name\` key inside the \`config.json\` file, and then, just type
 
@@ -74,30 +82,27 @@ key with the directory structure used by \`blog.sh\`.
 The posts are located in the \`content\` directory, the names of each files
 needs to be like the following:
 
-    9999.some-post-name
+    1970-01-01
+    1991-07-03
+    1996-10-01
+    2003-11-06
+    2004-10-20
 
-They are organized in descending order, that is \`9998.foo\` will be placed
-above \`9999.bar\`.
+They are organized in ascending order, that is, \`1991-07-04\` will be placed
+above \`1991-07-03\`.
 
 > You don't need to worry about the numbers, they are just for organization
 > purposes and don't show on the index page.
 
+> Oh, and you don't _need_ to care about it either, that is, if you just want to
+> see the circus taking fire.
+
 You may have already noticed that there are no file extensions present on the
-filename, instead, the title itself is basically a file extension. The reason
-for it is that it was easier for my smooth brain to write something that parsed
-the filenames without any issues.
+filename. The reason for it is that it was easier for my smooth brain to write 
+something that parsed the filenames without any issues.
 
-## There's one more thing
-
-There are 2 more commands:
-
-- \`serve\`
-- \`stop\`
-
-The \`serve\` command uses \`python -m http.server\` to create a server that you
-can use to preview your site on your local machine. It also uses \`entr\` to see
-changes made inside the \`content\` directory, and if there are any changes, it
-rebuilds the website.
+The title of each post will be taken from a \`<h1>\` tag present on the post. So
+yes, do not use \`<h1>\` tags (one \`#\`) on the post's apart for the title of it.
 
 ## The config.json file
 
@@ -159,9 +164,18 @@ anything indented like that will be enclosed inside a \`<code>\` tag.
 
 ## Why have you brought this upon this cursed land?
 
-Because I can, and I'm a idiot.
+First of all: because I can, and I'm a idiot.
 
 <img src="/assets/img/monkey.webp">
+
+Second, I really liked my experience of using [Org-mode's](https://orgmode.org/)
+\`export to HTML\` feature. It's basically a SSG, a basic one, but still one.
+
+So I wanted to create my own, one that is just focused on blog creation (so
+it's easier to write) and that was as much portable as it could get.
+
+And here it is, a shitty SSG that takes whatever the hell is on the config file
+and on the content directory and throws a bunch of HTML out of it.
 EOF
 
 }
@@ -169,32 +183,29 @@ EOF
 build_site() {
   [[ ! -f ".site" ]] && echo "You're not inside the site directory!" && exit 1
   rm -rf ./public
-  mkdir -p public
+  mkdir -p public/posts
 
   for FILE in $(/bin/ls ./content)
   do
-    cat ./pages/head.html > public/$FILE.html
-    smu ./content/$FILE >> public/$FILE.html
-    cat ./pages/footer.html >> public/$FILE.html
+    cat ./pages/head.html   >  public/posts/$FILE.html
+    cat ./pages/navbar.html >> public/posts/$FILE.html
+    echo "<article>"        >> public/posts/$FILE.html
+    smu ./content/$FILE     >> public/posts/$FILE.html
+    cat ./pages/footer.html >> public/posts/$FILE.html
   done
 
   cat ./pages/head.html > index.html
+  cat ./pages/navbar.html >> index.html
+  echo "<article>" >> index.html
   echo "<h1>$SITE_NAME</h1>" >> index.html
-  echo "<h4 id=\"links\">" >> index.html
-    [[ ! "$SITE_LINK_1_URL" == "null" ]] && echo "<a href=\"$SITE_LINK_1_URL\">$SITE_LINK_1_NAME</a>" >> index.html
-    [[ ! "$SITE_LINK_2_URL" == "null" ]] && echo "<a href=\"$SITE_LINK_2_URL\">$SITE_LINK_2_NAME</a>" >> index.html
-    [[ ! "$SITE_LINK_3_URL" == "null" ]] && echo "<a href=\"$SITE_LINK_3_URL\">$SITE_LINK_3_NAME</a>" >> index.html
-    [[ ! "$SITE_LINK_4_URL" == "null" ]] && echo "<a href=\"$SITE_LINK_4_URL\">$SITE_LINK_4_NAME</a>" >> index.html
-    [[ ! "$SITE_LINK_5_URL" == "null" ]] && echo "<a href=\"$SITE_LINK_5_URL\">$SITE_LINK_5_NAME</a>" >> index.html
-  echo "</h4>" >> index.html
-  echo "<h4 id=\"note\"><i>${SITE_NOTE}</i></h4>" >> index.html
+  echo "<h4><i>${SITE_NOTE}</i></h4>" >> index.html
   [[ ! -z "$SITE_DESCRIPTION" ]] && echo "<p>${SITE_DESCRIPTION}</p>" >> index.html
   echo "<h2>Posts</h2>" >> index.html
   echo "<ul>" >> index.html
 
-  for PAGE in $(/bin/ls -t ./public)
+  for PAGE in $(/bin/ls -1 ./public/posts | sort -r | tr '\n' ' ')
   do
-    echo "<li><a href=\"${PAGE}\">$(echo $PAGE | awk -F'.' '{print $2}')</a></li>" >> index.html
+    echo "<li><a href=\"/posts/${PAGE}\">$(grep '<h1>' ./public/posts/$PAGE | tr '<>/' '\n' | head -n3 | tail -n1 )</a></li>" >> index.html
   done
 
   echo "</ul>" >> index.html
@@ -203,35 +214,13 @@ build_site() {
   cp -r ./assets ./public
 }
 
-serve_site() {
-  if [[ -z "$(which entr)" ]]; then
-    echo "Please install entr to be able to use this command"
-    exit 1
-  fi
-
-  if [[ -z "$(which python)" ]]; then
-    echo "Please install python to be able to use this command"
-    exit 1
-  fi
-
-  /bin/ls content/* | entr -p blog.sh build &
-  python -m http.server -d public/ &
-}
-
-stop_server() {
-  killall python
-  killall entr
-}
-
 version() {
-  printf "\e[32mblog.sh \e[34m(v0.0.0)\e[0m\n"
+  printf "\e[32mblog.sh \e[34m(v0.0.1)\e[0m\n"
 }
 
 case $INPUT in
   "build") build_site;;
   "create") create_site;;
-  "serve") serve_site;;
-  "stop") stop_server;;
   "version") version;;
   *) cat << EOF
 
@@ -240,8 +229,6 @@ Usage: blog.sh <command>
 version - shows blog.sh version
 create  - create the website structure
 build   - build the website
-serve   - start a server
-stop    - stop the server
 
 EOF
 ;;

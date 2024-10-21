@@ -1,12 +1,18 @@
 :root {
-    --background:           #1F1F28;
-    --foreground:           #DCD7BA;
-    --grey:                 #2A2A37;
-    --red:                  #FF5D62;
-    --green:                #98BB6C;
-    --blue:                 #7E9CD8;
-    --primary:              #957FB8;
-    --border:               solid 1px var(--grey);
+    --background: #dddddd;
+    --foreground: #222222;
+    --grey:       #cccccc;
+    --accent:     #3377aa;
+    --border:     solid 1px var(--grey);
+}
+
+@media only screen and (prefers-color-scheme: dark) {
+  :root {
+    --background: #222222;
+    --foreground: #dddddd;
+    --grey:       #282828;
+    --accent:     #2266aa;
+  }
 }
 
 *::-webkit-scrollbar {
@@ -30,9 +36,33 @@ body {
     color: var(--foreground);
 }
 
+header {
+    position: sticky;
+    top: 0;
+}
+
+header > nav {
+    display: flex;
+    padding: 10px 20px;
+    justify-content: space-between;
+    background-color: var(--grey);
+    overflow-x: scroll;
+}
+
+header > nav > ul {
+    display: flex;
+    list-style: none;
+}
+
+header > nav > ul > li > a {
+    color: var(--foreground);
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
 a {
     text-decoration: none;
-    color: var(--blue);
+    color: var(--accent);
 }
 
 a:hover {
@@ -44,52 +74,65 @@ hr {
     border-bottom: none;
 }
 
-blockquote {
-    background-color: var(--grey);
-    color: var(--primary);
-    border-left: solid 5px var(--primary);
-    margin: 1em auto;
-    padding: 10px 1em;
-}
 
-blockquote > blockquote {
-    border-left: none;
-    border-top: solid 1px var(--primary);
-    margin: 0;
-    padding: 0;
-    color: var(--green);
+p > code {
+    color: var(--foreground);
+    background-color: var(--grey);
+    border-radius: 3px;
 }
 
 pre, code {
-    font-family: monospace;
     background-color: var(--grey);
     padding: 3px;
     overflow-x: scroll;
 }
 
-p, hr, ul, ol {
+blockquote {
+    background-color: var(--grey);
+    color: var(--accent);
+    border-left: solid 5px var(--accent);
+    padding: 10px 20px;
+}
+
+blockquote > p > code {
+    background-color: var(--accent);
+    color: var(--background);
+}
+
+blockquote > pre {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+p,
+hr,
+ul,
+ol {
     margin-top: 0.5em;
     margin-bottom: 0.5em;
     list-style-position: inside;
 }
 
-s {
-    opacity: 50%;
-}
-
 h1 {
     background-color: var(--grey);
     padding: 10px;
+    border-radius: 3px;
 }
 
-h1, #links, #note {
+h1,
+h4 {
     margin-top: 0.5em;
     margin-bottom: 0.5em;
     text-align: center;
 }
 
-h2 {
+h2,
+h3 {
     border-bottom: var(--border);
+}
+
+h4:has(i) {
+    margin-bottom: 2em;
 }
 
 img {
@@ -101,21 +144,30 @@ img {
     border: var(--border);
 }
 
-table, th, td {
+table,
+th,
+td {
     border: var(--border);
     padding: 5px;
     border-collapse: collapse;
 }
 
 table {
+    border: none;
+    overflow: scroll;
+    margin: 1em;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+colgroup {
     display: block;
     margin-left: auto;
     margin-right: auto;
-    border: none;
-    overflow: scroll;
 }
 
-th, td {
+th,
+td {
     padding-left: 1em;
     padding-right: 1em;
     margin: 0;

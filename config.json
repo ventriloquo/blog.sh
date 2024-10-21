@@ -2,14 +2,18 @@
   "name": "foo",
   "author": "bar",
   "lang": "en-us",
-  "description": "lorem ipsum",
   "note": "You could've just used jekyll or Hugo, you know that, right?",
+  "description": "Here's a description. I know, pretty empty, eh?",
   "favicon": {
     "filename": "fav",
     "extension": "webp"
   },
   "links": [
-    "Neocities", "https://neocities.org/site/tukainpng",
-    "Codeberg", "https://codeberg.org/tukain"
+    "Neocities",
+    "https://neocities.org/site/tukainpng",
+    "Codeberg",
+    "https://codeberg.org/tukain",
+    "Disroot",
+    "https://git.disroot.org/tukain"
   ]
 }
