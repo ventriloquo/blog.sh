@@ -45,18 +45,18 @@ create_site() {
 <body>
 EOF
 
-echo "<header><nav><ul><li><a href=\"/\">Blog</a></li></ul><ul>" > "pages/navbar.html"
+echo "<header><nav><ul><li><a href=\"/\">Home</a></li></ul><ul class=\"link\">" > "pages/navbar.html"
   [[ ! "$SITE_LINK_1_URL" == "null" ]] && echo "<li><a href=\"$SITE_LINK_1_URL\">[$SITE_LINK_1_NAME]</a> </li>" >> "pages/navbar.html"
   [[ ! "$SITE_LINK_2_URL" == "null" ]] && echo "<li><a href=\"$SITE_LINK_2_URL\">[$SITE_LINK_2_NAME]</a> </li>" >> "pages/navbar.html"
   [[ ! "$SITE_LINK_3_URL" == "null" ]] && echo "<li><a href=\"$SITE_LINK_3_URL\">[$SITE_LINK_3_NAME]</a> </li>" >> "pages/navbar.html"
   [[ ! "$SITE_LINK_4_URL" == "null" ]] && echo "<li><a href=\"$SITE_LINK_4_URL\">[$SITE_LINK_4_NAME]</a> </li>" >> "pages/navbar.html"
   [[ ! "$SITE_LINK_5_URL" == "null" ]] && echo "<li><a href=\"$SITE_LINK_5_URL\">[$SITE_LINK_5_NAME]</a> </li>" >> "pages/navbar.html"
-echo "</ul></nav></header>" >> "pages/navbar.html"
+echo "</ul><ul><li><a href=\"/blog.html\">Blog</a></li></ul></nav></header><article>" >> "pages/navbar.html"
 
   cat << EOF > "pages/footer.html"
 </article>
-</body>
 <footer><p>Made with <a href="https://codeberg.org/tukain/blog.sh">blog.sh</a></p></footer>
+</body>
 EOF
 
   cat << EOF > "content/deleteme"
@@ -188,28 +188,31 @@ build_site() {
   do
     cat ./pages/head.html   >  public/posts/$FILE.html
     cat ./pages/navbar.html >> public/posts/$FILE.html
-    echo "<article>"        >> public/posts/$FILE.html
     smu ./content/$FILE     >> public/posts/$FILE.html
     cat ./pages/footer.html >> public/posts/$FILE.html
   done
 
   cat ./pages/head.html > index.html
   cat ./pages/navbar.html >> index.html
-  echo "<article>" >> index.html
   echo "<h1>$SITE_NAME</h1>" >> index.html
   echo "<h4><i>${SITE_NOTE}</i></h4>" >> index.html
   [[ ! -z "$SITE_DESCRIPTION" ]] && echo "<p>${SITE_DESCRIPTION}</p>" >> index.html
-  echo "<h2>Posts</h2>" >> index.html
-  echo "<ul>" >> index.html
+  cat ./pages/footer.html >> index.html
+
+  cat ./pages/head.html > blog.html
+  cat ./pages/navbar.html >> blog.html
+
+  echo "<h2>Posts</h2>" >> blog.html
+  echo "<ul>" >> blog.html
 
   for PAGE in $(/bin/ls -1 ./public/posts | sort -r | tr '\n' ' ')
   do
-    echo "<li><a href=\"/posts/${PAGE}\">$(grep '<h1>' ./public/posts/$PAGE | tr '<>/' '\n' | head -n3 | tail -n1 )</a></li>" >> index.html
+    echo "<li><a href=\"/posts/${PAGE}\">$(grep '<h1>' ./public/posts/$PAGE | tr '<>/' '\n' | head -n3 | tail -n1 )</a></li>" >> blog.html
   done
 
-  echo "</ul>" >> index.html
-  cat ./pages/footer.html >> index.html
-  mv index.html public
+  echo "</ul>" >> blog.html
+  cat ./pages/footer.html >> blog.html
+  mv *.html public
   cp -r ./assets ./public
 }
 
