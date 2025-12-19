@@ -1,31 +1,17 @@
 #!/bin/sh
 
-CONFIG="./config.json"
+INPUT=$1 # DON'T CHANGE THIS
 
-# DON'T CHANGE THIS
-INPUT=$1
-SITE_NAME="$(jq -r .name < $CONFIG)"
-SITE_LANG="$(jq -r .lang < $CONFIG)"
-SITE_AUTHOR="$(jq -r .author < $CONFIG)"
-SITE_DESCRIPTION="$(jq -r .description < $CONFIG)"
-SITE_NOTE="$(jq -r .note < $CONFIG)"
-SITE_FAVICON_NAME="$(jq -r .favicon.filename < $CONFIG)"
-SITE_FAVICON_TYPE="$(jq -r .favicon.extension < $CONFIG)"
-SITE_LINK_1_NAME="$(jq -r .links[0] < $CONFIG)"
-SITE_LINK_1_URL="$(jq -r .links[1] < $CONFIG)"
-SITE_LINK_2_NAME="$(jq -r .links[2] < $CONFIG)"
-SITE_LINK_2_URL="$(jq -r .links[3] < $CONFIG)"
-SITE_LINK_3_NAME="$(jq -r .links[4] < $CONFIG)"
-SITE_LINK_3_URL="$(jq -r .links[5] < $CONFIG)"
-SITE_LINK_4_NAME="$(jq -r .links[6] < $CONFIG)"
-SITE_LINK_4_URL="$(jq -r .links[7] < $CONFIG)"
-SITE_LINK_5_NAME="$(jq -r .links[8] < $CONFIG)"
-SITE_LINK_5_URL="$(jq -r .links[9] < $CONFIG)"
+SITE_NAME="foo"
+SITE_LANG="en-us"
+SITE_AUTHOR="bar"
+SITE_NOTE="You could've just used jekyll or Hugo, you know that, right?"
+SITE_DESCRIPTION="Here's a description. I know, pretty empty, eh?"
+SITE_FAVICON_NAME="fav"
+SITE_FAVICON_TYPE="webp"
 
 create_site() {
   [ -z "$(which smu)" ] && echo "smu is not installed! Please install it from https://git.codemadness.org/smu/" && exit 1
-  [ -z "$(which jq)" ] && echo "jq is not installed! Please install it from your package repo!" && exit 1
-  [ ! -f "config.json" ] && echo "You don't have a config.json file!" && exit 1
   mkdir -p "content"
   mkdir -p "assets"
   mkdir -p "pages"
@@ -47,11 +33,17 @@ create_site() {
 <body>
 EOF
 
-[ "$SITE_LINK_1_URL" = "null" ] && SITE_LINK_1_URL="" && SITE_LINK_1_NAME="" && SITE_LINK_1_DISPLAY="display: none"
-[ "$SITE_LINK_2_URL" = "null" ] && SITE_LINK_2_URL="" && SITE_LINK_2_NAME="" && SITE_LINK_2_DISPLAY="display: none"
-[ "$SITE_LINK_3_URL" = "null" ] && SITE_LINK_3_URL="" && SITE_LINK_3_NAME="" && SITE_LINK_3_DISPLAY="display: none"
-[ "$SITE_LINK_4_URL" = "null" ] && SITE_LINK_4_URL="" && SITE_LINK_4_NAME="" && SITE_LINK_4_DISPLAY="display: none"
-[ "$SITE_LINK_5_URL" = "null" ] && SITE_LINK_5_URL="" && SITE_LINK_5_NAME="" && SITE_LINK_5_DISPLAY="display: none"
+# Links list: [URL NAME]
+set -- https://neocities.org/site/tukainpng Neocities \
+       https://codeberg.org/tukain Codeberg \
+       https://github.com/ventriloquo Github
+
+# If the [URL NAME] pair is not complete, the link will not be visible
+[ -z "$(echo $1)" ] || [ -z "$(echo $2)" ]  && SITE_LINK_1_DISPLAY="display: none"
+[ -z "$(echo $3)" ] || [ -z "$(echo $4)" ]  && SITE_LINK_2_DISPLAY="display: none"
+[ -z "$(echo $5)" ] || [ -z "$(echo $6)" ]  && SITE_LINK_3_DISPLAY="display: none"
+[ -z "$(echo $7)" ] || [ -z "$(echo $8)" ]  && SITE_LINK_4_DISPLAY="display: none"
+[ -z "$(echo $9)" ] || [ -z "$(echo $10)" ] && SITE_LINK_5_DISPLAY="display: none"
 
 cat << EOF > "pages/navbar.html"
 <header>
@@ -60,11 +52,11 @@ cat << EOF > "pages/navbar.html"
       <a class="text" href="/">Início</a>
     </div>
     <div id="nav_list" class="nav_items">
-      <a style="$SITE_LINK_1_DISPLAY" href="$SITE_LINK_1_URL">$SITE_LINK_1_NAME</a>
-      <a style="$SITE_LINK_2_DISPLAY" href="$SITE_LINK_2_URL">$SITE_LINK_2_NAME</a>
-      <a style="$SITE_LINK_3_DISPLAY" href="$SITE_LINK_3_URL">$SITE_LINK_3_NAME</a>
-      <a style="$SITE_LINK_4_DISPLAY" href="$SITE_LINK_4_URL">$SITE_LINK_4_NAME</a>
-      <a style="$SITE_LINK_5_DISPLAY" href="$SITE_LINK_5_URL">$SITE_LINK_5_NAME</a>
+      <a style="$SITE_LINK_1_DISPLAY" href="${1}">${2}</a>
+      <a style="$SITE_LINK_2_DISPLAY" href="${3}">${4}</a>
+      <a style="$SITE_LINK_3_DISPLAY" href="${5}">${6}</a>
+      <a style="$SITE_LINK_4_DISPLAY" href="${7}">${8}</a>
+      <a style="$SITE_LINK_5_DISPLAY" href="${9}">${10}</a>
     </div>
     <div>
       <a href="/blog.html">Blog</a>
@@ -72,6 +64,8 @@ cat << EOF > "pages/navbar.html"
     <button popovertarget="nav_menu" popovertargetaction="toggle" class="nav_menu">Menu</button>
   </nav>
   <div popover="" id="nav_menu">
+  <a style="margin: 0; padding: 10px 20px; color: var(--background); background-color: var(--accent); text-align: center" href="/blog.html">Blog</a>
+  <hr style="border-color: var(--accent)">
     <a style="$SITE_LINK_1_DISPLAY" href="$SITE_LINK_1_URL">$SITE_LINK_1_NAME</a>
     <a style="$SITE_LINK_2_DISPLAY" href="$SITE_LINK_2_URL">$SITE_LINK_2_NAME</a>
     <a style="$SITE_LINK_3_DISPLAY" href="$SITE_LINK_3_URL">$SITE_LINK_3_NAME</a>
@@ -91,21 +85,16 @@ EOF
 cat << EOF > "content/deleteme"
 # blog.sh
 
-<center>A <s>simple</s> shitty Static Site Generator writen in Posix Shell Script.</center>
-
-> Before you proceed on reading all of this yappanese
->
-> - All variables are defined inside a \`config.json\` file.
-> - You **NEED** to have \`smu\` installed. it is a simple program that converts a Markdown-like file to HTML, and it is used by this script. You can clone it from git://git.codemadness.org/smu
+<p>A <s>simple</s> shitty Blog Generator writen in Posix Shell Script.</p>
 
 ## How to use
 
-To create a site, first, modify the \`name\` key inside the \`config.json\` file, and then, just type
+To create a site, just type:
 
-    blog.sh create
+    ./blog.sh create && ./blog.sh build
 
-This will create a directory with the name specified on the \`name\`
-key with the directory structure used by \`blog.sh\`.
+This will create the directory structure used by \`blog.sh\` with the default layout and
+"build" the website and put it's files on the \`public\` directory.
 
 The posts are located in the \`content\` directory, the names of each files
 needs to be like the following:
@@ -116,51 +105,47 @@ needs to be like the following:
     2003-11-06
     2004-10-20
 
-They are organized in ascending order, that is, \`1991-07-04\` will be placed
+They are organized from higher to lower number, that is, \`1991-07-04\` will be placed
 above \`1991-07-03\`.
 
-> You don't need to worry about the numbers, they are just for organization
-> purposes and don't show on the index page.
-
-> Oh, and you don't _need_ to care about it either, that is, if you just want to
-> see the circus taking fire.
-
-You may have already noticed that there are no file extensions present on the
-filename. The reason for it is that it was easier for my smooth brain to write 
-something that parsed the filenames without any issues.
+> You may have already noticed that there are no file extensions present on the
+> filename. The reason for it is that it was easier for my smooth brain to write 
+> something that parsed the filenames without any issues.
 
 The title of each post will be taken from a \`<h1>\` tag present on the post. So
 yes, do not use \`<h1>\` tags (one \`#\`) on the post's apart for the title of it.
 
-## The config.json file
+## How do i configure this thing?
 
-Yeah... I'm using json to configure this thing, idk, it's easier to just use \`jq\`
-and don't think much about it.
+That's the funny part: you edit the source code.
 
-The config looks like this:
+Don't worry, you just need to modify some variables and a \`positional parameter\`.
 
-    {
-      "name": "foo",
-      "author": "bar",
-      "lang": "en-us",
-      "description": "lorem ipsum",
-      "note": "You could've just used jekyll or Hugo, you know that, right?",
-      "favicon": {
-        "filename": "fav",
-        "extension": "webp"
-      },
-      "links": [
-        "Neocities", "https://neocities.org/site/tukainpng",
-        "Codeberg", "https://codeberg.org/tukain"
-      ]
-    }
+The variables are:
+- \`SITE_NAME\`
+- \`SITE_LANG\`
+- \`SITE_AUTHOR\`
+- \`SITE_NOTE\`
+- \`SITE_DESCRIPTION\`
+- \`SITE_FAVICON_NAME\`
+- \`SITE_FAVICON_TYPE\`
 
-If you don't have a \`config.json\` file on the directory that you're currently,
-then you won't be able to use the \`create\` command.
+These are all a bunch of strings (as basically anything on shell-scripts), so modify then as
+you like it.
+
+And the \`positional parameter\` has this comment on top of if: \`# Links list\`.
+
+> I'm using a \`positional parameter\` because Posix Shell's don't have no arrays on then.
+
+This links list is writen like this:
+    set -- https://google.com/ google
+
+It's like a \`key:value\` thing. First you put a URL, and then a NAME. These links are shown on the navbar,
+use it to link your social media or something.
 
 ## smu syntax
 
-Wellll..... If you have already used Markdown, then you are at home... But not quite.
+Wellll... If you have already used Markdown, then you are at home... But not quite.
 
 Things like headings
 
@@ -194,16 +179,13 @@ anything indented like that will be enclosed inside a \`<code>\` tag.
 
 First of all: because I can, and I'm a idiot.
 
-<img src="/assets/img/monkey.webp">
-
-Second, I really liked my experience of using [Org-mode's](https://orgmode.org/)
+Second: I really liked my experience of using [Org-mode's](https://orgmode.org/)
 \`export to HTML\` feature. It's basically a SSG, a basic one, but still one.
 
 So I wanted to create my own, one that is just focused on blog creation (so
 it's easier to write) and that was as much portable as it could get.
 
-And here it is, a shitty SSG that takes whatever the hell is on the config file
-and on the content directory and throws a bunch of HTML out of it.
+And here it is, a shitty SSG that takes whatever the hell is on content directory and throws a bunch of HTML out of it.
 EOF
 
 }
@@ -246,7 +228,7 @@ build_site() {
 }
 
 version() {
-  printf "\e[32mblog.sh \e[34m(v0.0.1)\e[0m\n"
+  printf "\e[32mblog.sh \e[34m(v0.0.2)\e[0m\n"
 }
 
 case "$INPUT" in
