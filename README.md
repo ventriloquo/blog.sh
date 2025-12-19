@@ -6,7 +6,9 @@
 
 To create a site, just type:
 
-    ./blog.sh create && ./blog.sh build
+```
+./blog.sh create && ./blog.sh build
+```
 
 This will create the directory structure used by `blog.sh` with the default layout and
 "build" the website and put it's files on the `public` directory.
@@ -53,6 +55,7 @@ And the `positional parameter` has this comment on top of if: `# Links list`.
 > I'm using a `positional parameter` because Posix Shell's don't have no arrays on then.
 
 This links list is writen like this:
+
     set -- https://google.com/ google
 
 It's like a `key:value` thing. First you put a URL, and then a NAME. These links are shown on the navbar,
