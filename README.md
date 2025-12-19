@@ -6,9 +6,7 @@
 
 To create a site, just type:
 
-```
-./blog.sh create && ./blog.sh build
-```
+    ./blog.sh create && ./blog.sh build
 
 This will create the directory structure used by `blog.sh` with the default layout and
 "build" the website and put it's files on the `public` directory.
