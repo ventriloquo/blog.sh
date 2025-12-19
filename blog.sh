@@ -47,21 +47,48 @@ create_site() {
 <body>
 EOF
 
-echo "<header><nav><ul><li><a href=\"/\">Home</a></li></ul><ul class=\"link\">" > "pages/navbar.html"
-  [ ! "$SITE_LINK_1_URL" = "null" ] && echo "<li><a href=\"$SITE_LINK_1_URL\">[$SITE_LINK_1_NAME]</a> </li>" >> "pages/navbar.html"
-  [ ! "$SITE_LINK_2_URL" = "null" ] && echo "<li><a href=\"$SITE_LINK_2_URL\">[$SITE_LINK_2_NAME]</a> </li>" >> "pages/navbar.html"
-  [ ! "$SITE_LINK_3_URL" = "null" ] && echo "<li><a href=\"$SITE_LINK_3_URL\">[$SITE_LINK_3_NAME]</a> </li>" >> "pages/navbar.html"
-  [ ! "$SITE_LINK_4_URL" = "null" ] && echo "<li><a href=\"$SITE_LINK_4_URL\">[$SITE_LINK_4_NAME]</a> </li>" >> "pages/navbar.html"
-  [ ! "$SITE_LINK_5_URL" = "null" ] && echo "<li><a href=\"$SITE_LINK_5_URL\">[$SITE_LINK_5_NAME]</a> </li>" >> "pages/navbar.html"
-echo "</ul><ul><li><a href=\"/blog.html\">Blog</a></li></ul></nav></header><article>" >> "pages/navbar.html"
+[ "$SITE_LINK_1_URL" = "null" ] && SITE_LINK_1_URL="" && SITE_LINK_1_NAME="" && SITE_LINK_1_DISPLAY="display: none"
+[ "$SITE_LINK_2_URL" = "null" ] && SITE_LINK_2_URL="" && SITE_LINK_2_NAME="" && SITE_LINK_2_DISPLAY="display: none"
+[ "$SITE_LINK_3_URL" = "null" ] && SITE_LINK_3_URL="" && SITE_LINK_3_NAME="" && SITE_LINK_3_DISPLAY="display: none"
+[ "$SITE_LINK_4_URL" = "null" ] && SITE_LINK_4_URL="" && SITE_LINK_4_NAME="" && SITE_LINK_4_DISPLAY="display: none"
+[ "$SITE_LINK_5_URL" = "null" ] && SITE_LINK_5_URL="" && SITE_LINK_5_NAME="" && SITE_LINK_5_DISPLAY="display: none"
 
-  cat << EOF > "pages/footer.html"
+cat << EOF > "pages/navbar.html"
+<header>
+  <nav>
+    <div class="home_link">
+      <a class="text" href="/">Início</a>
+    </div>
+    <div id="nav_list" class="nav_items">
+      <a style="$SITE_LINK_1_DISPLAY" href="$SITE_LINK_1_URL">$SITE_LINK_1_NAME</a>
+      <a style="$SITE_LINK_2_DISPLAY" href="$SITE_LINK_2_URL">$SITE_LINK_2_NAME</a>
+      <a style="$SITE_LINK_3_DISPLAY" href="$SITE_LINK_3_URL">$SITE_LINK_3_NAME</a>
+      <a style="$SITE_LINK_4_DISPLAY" href="$SITE_LINK_4_URL">$SITE_LINK_4_NAME</a>
+      <a style="$SITE_LINK_5_DISPLAY" href="$SITE_LINK_5_URL">$SITE_LINK_5_NAME</a>
+    </div>
+    <div>
+      <a href="/blog.html">Blog</a>
+    </div>
+    <button popovertarget="nav_menu" popovertargetaction="toggle" class="nav_menu">Menu</button>
+  </nav>
+  <div popover="" id="nav_menu">
+    <a style="$SITE_LINK_1_DISPLAY" href="$SITE_LINK_1_URL">$SITE_LINK_1_NAME</a>
+    <a style="$SITE_LINK_2_DISPLAY" href="$SITE_LINK_2_URL">$SITE_LINK_2_NAME</a>
+    <a style="$SITE_LINK_3_DISPLAY" href="$SITE_LINK_3_URL">$SITE_LINK_3_NAME</a>
+    <a style="$SITE_LINK_4_DISPLAY" href="$SITE_LINK_4_URL">$SITE_LINK_4_NAME</a>
+    <a style="$SITE_LINK_5_DISPLAY" href="$SITE_LINK_5_URL">$SITE_LINK_5_NAME</a>
+  </div>
+</header>
+<article>
+EOF
+
+cat << EOF > "pages/footer.html"
 </article>
 <footer><p>Made with <a href="https://codeberg.org/tukain/blog.sh">blog.sh</a></p></footer>
 </body>
 EOF
 
-  cat << EOF > "content/deleteme"
+cat << EOF > "content/deleteme"
 # blog.sh
 
 <center>A <s>simple</s> shitty Static Site Generator writen in Posix Shell Script.</center>
@@ -197,8 +224,8 @@ build_site() {
   cat ./pages/head.html > index.html
   cat ./pages/navbar.html >> index.html
   echo "<h1>$SITE_NAME</h1>" >> index.html
-  echo "<h4><i>${SITE_NOTE}</i></h4>" >> index.html
-  [ -n "$SITE_DESCRIPTION" ] && echo "<p>${SITE_DESCRIPTION}</p>" >> index.html
+  [ ! "$SITE_NOTE" = "null" ] && echo "<h4><i>${SITE_NOTE}</i></h4>" >> index.html
+  [ ! "$SITE_DESCRIPTION" = "null" ] && echo "<p>${SITE_DESCRIPTION}</p>" >> index.html
   cat ./pages/footer.html >> index.html
 
   cat ./pages/head.html > blog.html
