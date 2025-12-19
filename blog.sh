@@ -3,6 +3,7 @@
 INPUT=$1 # DON'T CHANGE THIS
 
 SITE_NAME="foo"
+SITE_URL="https://foo.bar"
 SITE_LANG="en-us"
 SITE_AUTHOR="bar"
 SITE_NOTE="You could've just used jekyll or Hugo, you know that, right?"
@@ -127,12 +128,39 @@ build_site() {
   cp -r ./assets ./public
 }
 
+build_rss() {
+
+cat << EOF > ./public/rss.xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+  <channel>
+    <title>$SITE_NAME</title>
+    <link>$SITE_URL</link>
+    <description>$SITE_DESCRIPTION</description>
+EOF
+
+for PAGE in $(ls -1 ./public/posts | sort -r | tr '\n' ' ')
+do
+  echo "<item>" >> ./public/rss.xml
+  echo "<title>$(grep '<h1>' ./public/posts/"$PAGE" | tr '<>/' '\n' | head -n3 | tail -n1 )</title>" >> ./public/rss.xml
+  echo "<link>$SITE_URL/$PAGE</link>" >> ./public/rss.xml
+  echo "<id>$SITE_URL/$PAGE</id>" >> ./public/rss.xml
+  echo "</item>" >> ./public/rss.xml
+done
+
+cat << EOF >> ./public/rss.xml
+  </channel>
+</rss>
+EOF
+
+}
+
 version() {
   printf "\033[32mblog.sh \033[34m(v0.0.2)\033[0m\n"
 }
 
 case "$INPUT" in
-  "build") build_site;;
+  "build") build_site && build_rss;;
   "create") create_site;;
   "version") version;;
   *) cat << EOF
