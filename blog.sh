@@ -58,7 +58,7 @@ cat << EOF > "pages/navbar.html"
       <a style="$SITE_LINK_4_DISPLAY" href="${7}">${8}</a>
       <a style="$SITE_LINK_5_DISPLAY" href="${9}">${10}</a>
     </div>
-    <div>
+    <div class="nav_items">
       <a href="/blog.html">Blog</a>
     </div>
     <button popovertarget="nav_menu" popovertargetaction="toggle" class="nav_menu">Menu</button>
@@ -66,11 +66,11 @@ cat << EOF > "pages/navbar.html"
   <div popover="" id="nav_menu">
   <a style="margin: 0; padding: 10px 20px; color: var(--background); background-color: var(--accent); text-align: center" href="/blog.html">Blog</a>
   <hr style="border-color: var(--accent)">
-    <a style="$SITE_LINK_1_DISPLAY" href="$SITE_LINK_1_URL">$SITE_LINK_1_NAME</a>
-    <a style="$SITE_LINK_2_DISPLAY" href="$SITE_LINK_2_URL">$SITE_LINK_2_NAME</a>
-    <a style="$SITE_LINK_3_DISPLAY" href="$SITE_LINK_3_URL">$SITE_LINK_3_NAME</a>
-    <a style="$SITE_LINK_4_DISPLAY" href="$SITE_LINK_4_URL">$SITE_LINK_4_NAME</a>
-    <a style="$SITE_LINK_5_DISPLAY" href="$SITE_LINK_5_URL">$SITE_LINK_5_NAME</a>
+    <a style="$SITE_LINK_1_DISPLAY" href="${1}">${2}</a>
+    <a style="$SITE_LINK_2_DISPLAY" href="${3}">${4}</a>
+    <a style="$SITE_LINK_3_DISPLAY" href="${5}">${6}</a>
+    <a style="$SITE_LINK_4_DISPLAY" href="${7}">${8}</a>
+    <a style="$SITE_LINK_5_DISPLAY" href="${9}">${10}</a>
   </div>
 </header>
 <article>
