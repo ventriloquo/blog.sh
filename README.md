@@ -38,6 +38,7 @@ Don't worry, you just need to modify some variables and a `positional parameter`
 
 The variables are:
 - `SITE_NAME`
+- `SITE_URL`
 - `SITE_LANG`
 - `SITE_AUTHOR`
 - `SITE_NOTE`
