@@ -1,29 +1,31 @@
-#!/usr/bin/env bash
+#!/bin/sh
+
+CONFIG="./config.json"
 
 # DON'T CHANGE THIS
 INPUT=$1
-SITE_NAME=$(cat ./config.json | jq -r .name)
-SITE_LANG="$(cat ./config.json | jq -r .lang)"
-SITE_AUTHOR="$(cat ./config.json | jq -r .author)"
-SITE_DESCRIPTION="$(cat ./config.json | jq -r .description)"
-SITE_NOTE="$(cat ./config.json | jq -r .note)"
-SITE_FAVICON_NAME="$(cat ./config.json | jq -r .favicon.filename)"
-SITE_FAVICON_TYPE="$(cat ./config.json | jq -r .favicon.extension)"
-SITE_LINK_1_NAME="$(cat ./config.json | jq -r .links[0])"
-SITE_LINK_1_URL="$(cat ./config.json | jq -r .links[1])"
-SITE_LINK_2_NAME="$(cat ./config.json | jq -r .links[2])"
-SITE_LINK_2_URL="$(cat ./config.json | jq -r .links[3])"
-SITE_LINK_3_NAME="$(cat ./config.json | jq -r .links[4])"
-SITE_LINK_3_URL="$(cat ./config.json | jq -r .links[5])"
-SITE_LINK_4_NAME="$(cat ./config.json | jq -r .links[6])"
-SITE_LINK_4_URL="$(cat ./config.json | jq -r .links[7])"
-SITE_LINK_5_NAME="$(cat ./config.json | jq -r .links[8])"
-SITE_LINK_5_URL="$(cat ./config.json | jq -r .links[9])"
+SITE_NAME="$(jq -r .name < $CONFIG)"
+SITE_LANG="$(jq -r .lang < $CONFIG)"
+SITE_AUTHOR="$(jq -r .author < $CONFIG)"
+SITE_DESCRIPTION="$(jq -r .description < $CONFIG)"
+SITE_NOTE="$(jq -r .note < $CONFIG)"
+SITE_FAVICON_NAME="$(jq -r .favicon.filename < $CONFIG)"
+SITE_FAVICON_TYPE="$(jq -r .favicon.extension < $CONFIG)"
+SITE_LINK_1_NAME="$(jq -r .links[0] < $CONFIG)"
+SITE_LINK_1_URL="$(jq -r .links[1] < $CONFIG)"
+SITE_LINK_2_NAME="$(jq -r .links[2] < $CONFIG)"
+SITE_LINK_2_URL="$(jq -r .links[3] < $CONFIG)"
+SITE_LINK_3_NAME="$(jq -r .links[4] < $CONFIG)"
+SITE_LINK_3_URL="$(jq -r .links[5] < $CONFIG)"
+SITE_LINK_4_NAME="$(jq -r .links[6] < $CONFIG)"
+SITE_LINK_4_URL="$(jq -r .links[7] < $CONFIG)"
+SITE_LINK_5_NAME="$(jq -r .links[8] < $CONFIG)"
+SITE_LINK_5_URL="$(jq -r .links[9] < $CONFIG)"
 
 create_site() {
-  [[ -z "$(which smu)" ]] && echo "smu is not installed! Please install it from https://git.codemadness.org/smu/" && exit 1
-  [[ -z "$(which jq)" ]] && echo "jq is not installed! Please install it from your package repo!" && exit 1
-  [[ ! -f "config.json" ]] && echo "You don't have a config.json file!" && exit 1
+  [ -z "$(which smu)" ] && echo "smu is not installed! Please install it from https://git.codemadness.org/smu/" && exit 1
+  [ -z "$(which jq)" ] && echo "jq is not installed! Please install it from your package repo!" && exit 1
+  [ ! -f "config.json" ] && echo "You don't have a config.json file!" && exit 1
   mkdir -p "content"
   mkdir -p "assets"
   mkdir -p "pages"
@@ -46,11 +48,11 @@ create_site() {
 EOF
 
 echo "<header><nav><ul><li><a href=\"/\">Home</a></li></ul><ul class=\"link\">" > "pages/navbar.html"
-  [[ ! "$SITE_LINK_1_URL" == "null" ]] && echo "<li><a href=\"$SITE_LINK_1_URL\">[$SITE_LINK_1_NAME]</a> </li>" >> "pages/navbar.html"
-  [[ ! "$SITE_LINK_2_URL" == "null" ]] && echo "<li><a href=\"$SITE_LINK_2_URL\">[$SITE_LINK_2_NAME]</a> </li>" >> "pages/navbar.html"
-  [[ ! "$SITE_LINK_3_URL" == "null" ]] && echo "<li><a href=\"$SITE_LINK_3_URL\">[$SITE_LINK_3_NAME]</a> </li>" >> "pages/navbar.html"
-  [[ ! "$SITE_LINK_4_URL" == "null" ]] && echo "<li><a href=\"$SITE_LINK_4_URL\">[$SITE_LINK_4_NAME]</a> </li>" >> "pages/navbar.html"
-  [[ ! "$SITE_LINK_5_URL" == "null" ]] && echo "<li><a href=\"$SITE_LINK_5_URL\">[$SITE_LINK_5_NAME]</a> </li>" >> "pages/navbar.html"
+  [ ! "$SITE_LINK_1_URL" = "null" ] && echo "<li><a href=\"$SITE_LINK_1_URL\">[$SITE_LINK_1_NAME]</a> </li>" >> "pages/navbar.html"
+  [ ! "$SITE_LINK_2_URL" = "null" ] && echo "<li><a href=\"$SITE_LINK_2_URL\">[$SITE_LINK_2_NAME]</a> </li>" >> "pages/navbar.html"
+  [ ! "$SITE_LINK_3_URL" = "null" ] && echo "<li><a href=\"$SITE_LINK_3_URL\">[$SITE_LINK_3_NAME]</a> </li>" >> "pages/navbar.html"
+  [ ! "$SITE_LINK_4_URL" = "null" ] && echo "<li><a href=\"$SITE_LINK_4_URL\">[$SITE_LINK_4_NAME]</a> </li>" >> "pages/navbar.html"
+  [ ! "$SITE_LINK_5_URL" = "null" ] && echo "<li><a href=\"$SITE_LINK_5_URL\">[$SITE_LINK_5_NAME]</a> </li>" >> "pages/navbar.html"
 echo "</ul><ul><li><a href=\"/blog.html\">Blog</a></li></ul></nav></header><article>" >> "pages/navbar.html"
 
   cat << EOF > "pages/footer.html"
@@ -62,7 +64,7 @@ EOF
   cat << EOF > "content/deleteme"
 # blog.sh
 
-<center>A <s>simple</s> shitty Static Site Generator writen in bash.</center>
+<center>A <s>simple</s> shitty Static Site Generator writen in Posix Shell Script.</center>
 
 > Before you proceed on reading all of this yappanese
 >
@@ -180,23 +182,23 @@ EOF
 }
 
 build_site() {
-  [[ ! -f ".site" ]] && echo "You're not inside the site directory!" && exit 1
+  [ ! -f ".site" ] && echo "You're not inside the site directory!" && exit 1
   rm -rf ./public
   mkdir -p public/posts
 
   for FILE in $(/bin/ls ./content)
   do
-    cat ./pages/head.html   >  public/posts/$FILE.html
-    cat ./pages/navbar.html >> public/posts/$FILE.html
-    smu ./content/$FILE     >> public/posts/$FILE.html
-    cat ./pages/footer.html >> public/posts/$FILE.html
+    cat ./pages/head.html   >  public/posts/"$FILE".html
+    cat ./pages/navbar.html >> public/posts/"$FILE".html
+    smu ./content/$FILE     >> public/posts/"$FILE".html
+    cat ./pages/footer.html >> public/posts/"$FILE".html
   done
 
   cat ./pages/head.html > index.html
   cat ./pages/navbar.html >> index.html
   echo "<h1>$SITE_NAME</h1>" >> index.html
   echo "<h4><i>${SITE_NOTE}</i></h4>" >> index.html
-  [[ ! -z "$SITE_DESCRIPTION" ]] && echo "<p>${SITE_DESCRIPTION}</p>" >> index.html
+  [ -n "$SITE_DESCRIPTION" ] && echo "<p>${SITE_DESCRIPTION}</p>" >> index.html
   cat ./pages/footer.html >> index.html
 
   cat ./pages/head.html > blog.html
@@ -207,7 +209,7 @@ build_site() {
 
   for PAGE in $(/bin/ls -1 ./public/posts | sort -r | tr '\n' ' ')
   do
-    echo "<li><a href=\"/posts/${PAGE}\">$(grep '<h1>' ./public/posts/$PAGE | tr '<>/' '\n' | head -n3 | tail -n1 )</a></li>" >> blog.html
+    echo "<li><a href=\"/posts/${PAGE}\">$(grep '<h1>' ./public/posts/"$PAGE" | tr '<>/' '\n' | head -n3 | tail -n1 )</a></li>" >> blog.html
   done
 
   echo "</ul>" >> blog.html
@@ -220,7 +222,7 @@ version() {
   printf "\e[32mblog.sh \e[34m(v0.0.1)\e[0m\n"
 }
 
-case $INPUT in
+case "$INPUT" in
   "build") build_site;;
   "create") create_site;;
   "version") version;;

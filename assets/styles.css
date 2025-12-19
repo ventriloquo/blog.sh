@@ -1,3 +1,8 @@
+@font-face {
+  src: url("/assets/fonts/Iosevka-Regular.woff2");
+  font-family: Iosevka-Regular;
+}
+
 :root {
     --background: #dddddd;
     --foreground: #222222;
@@ -27,7 +32,7 @@
 html {
     position: relative;
     min-height: 100%;
-    font-family: system-ui;
+    font-family: "Iosevka-Regular", system-ui;
     scroll-behavior: smooth;
 }
 
