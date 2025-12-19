@@ -39,11 +39,11 @@ set -- https://neocities.org/site/tukainpng Neocities \
        https://github.com/ventriloquo Github
 
 # If the [URL NAME] pair is not complete, the link will not be visible
-[ -z "$(echo $1)" ] || [ -z "$(echo $2)" ]  && SITE_LINK_1_DISPLAY="display: none"
-[ -z "$(echo $3)" ] || [ -z "$(echo $4)" ]  && SITE_LINK_2_DISPLAY="display: none"
-[ -z "$(echo $5)" ] || [ -z "$(echo $6)" ]  && SITE_LINK_3_DISPLAY="display: none"
-[ -z "$(echo $7)" ] || [ -z "$(echo $8)" ]  && SITE_LINK_4_DISPLAY="display: none"
-[ -z "$(echo $9)" ] || [ -z "$(echo $10)" ] && SITE_LINK_5_DISPLAY="display: none"
+[ -z "${1}" ] || [ -z "${2}" ]  && SITE_LINK_1_DISPLAY="display: none"
+[ -z "${3}" ] || [ -z "${4}" ]  && SITE_LINK_2_DISPLAY="display: none"
+[ -z "${5}" ] || [ -z "${6}" ]  && SITE_LINK_3_DISPLAY="display: none"
+[ -z "${7}" ] || [ -z "${8}" ]  && SITE_LINK_4_DISPLAY="display: none"
+[ -z "${9}" ] || [ -z "${10}" ] && SITE_LINK_5_DISPLAY="display: none"
 
 cat << EOF > "pages/navbar.html"
 <header>
@@ -95,15 +95,15 @@ build_site() {
   do
     cat ./pages/head.html   >  public/posts/"$FILE".html
     cat ./pages/navbar.html >> public/posts/"$FILE".html
-    smu ./content/$FILE     >> public/posts/"$FILE".html
+    smu ./content/"$FILE"   >> public/posts/"$FILE".html
     cat ./pages/footer.html >> public/posts/"$FILE".html
   done
 
   cat ./pages/head.html > index.html
   cat ./pages/navbar.html >> index.html
   echo "<h1>$SITE_NAME</h1>" >> index.html
-  [ ! "$SITE_NOTE" = "null" ] && echo "<h4><i>${SITE_NOTE}</i></h4>" >> index.html
-  [ ! "$SITE_DESCRIPTION" = "null" ] && echo "<p>${SITE_DESCRIPTION}</p>" >> index.html
+  [ "$SITE_NOTE" ] && echo "<h4><i>${SITE_NOTE}</i></h4>" >> index.html
+  [ "$SITE_DESCRIPTION" ] && echo "<p>${SITE_DESCRIPTION}</p>" >> index.html
   cat ./pages/footer.html >> index.html
 
   cat ./pages/head.html > blog.html
