@@ -259,6 +259,10 @@ article {
   min-height: 100vh;
 }
 
+@view-transition {
+  navigation: auto;
+}
+
 @media only screen and (max-width: 1280px) {
   nav {
     align-items: center;
