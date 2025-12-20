@@ -11,6 +11,8 @@ SITE_DESCRIPTION="Here's a description. I know, pretty empty, eh?"
 SITE_FAVICON_NAME="fav"
 SITE_FAVICON_TYPE="webp"
 BLOG_DIR="blog"
+CREATE_HOMEPAGE="true"
+LATEST_POSTS_TEXT="Latest posts:"
 
 create_site() {
   command -v smu >/dev/null 2>&1 || {
@@ -130,13 +132,6 @@ build_site() {
     cat ./pages/footer.html       >> $OUT_FILE
   done
 
-  cat ./pages/head.html > index.html
-  cat ./pages/navbar.html >> index.html
-  echo "<h1>$SITE_NAME</h1>" >> index.html
-  [ "$SITE_NOTE" ]        && echo "<h4><i>$SITE_NOTE</i></h4>"  >> index.html
-  [ "$SITE_DESCRIPTION" ] && echo "<p>$SITE_DESCRIPTION</p>"    >> index.html
-  cat ./pages/footer.html >> index.html
-
   BLOG_OUTPUT="$BLOG_DIR/index.html"
   mkdir -p $BLOG_DIR
   cat ./pages/head.html   > $BLOG_OUTPUT
@@ -154,7 +149,6 @@ build_site() {
   POST_URL="/posts$(echo $POST_OUTPUT | awk -F'./public/posts' '{print $2}' | xargs)"
   for PAGE in $(ls -1d $POST_OUTPUT | sort -r | tr '\n\:' ' ')
   do
-    echo $PAGE
     POST_YEAR=$(echo $PAGE | awk -F'/' '{print $4}')
     POST_MONTH=$(echo $PAGE | awk -F'/' '{print $5}')
     POST_DAY=$(echo $PAGE| awk -F'/' '{print $6}')
@@ -174,8 +168,46 @@ build_site() {
 
   printf "</tbody></table>" >> $BLOG_OUTPUT
   cat ./pages/footer.html >> $BLOG_OUTPUT
-  mv *.html $BLOG_DIR public
+  mv $BLOG_DIR public
   cp -r ./assets ./public
+
+  if [ "$CREATE_HOMEPAGE" = "true" ]; then
+    cat ./pages/head.html > index.html
+    cat ./pages/navbar.html >> index.html
+    echo "<h1>$SITE_NAME</h1>" >> index.html
+    [ "$SITE_NOTE" ]        && echo "<h4><i>$SITE_NOTE</i></h4>"  >> index.html
+    [ "$SITE_DESCRIPTION" ] && echo "<p>$SITE_DESCRIPTION</p>"    >> index.html
+
+    BLOG_OUTPUT="index.html"
+    printf "<h3>$LATEST_POSTS_TEXT</h3>"                      >> $BLOG_OUTPUT
+    printf "<table><tbody>"                                   >> $BLOG_OUTPUT
+    POST_OUTPUT="./public/posts/*/*/*/*"
+    POST_URL="/posts$(echo $POST_OUTPUT | awk -F'./public/posts' '{print $2}' | xargs)"
+    for PAGE in $(ls -1d $POST_OUTPUT | sort -r | head -n5 | tr '\n\:' ' ')
+    do
+      POST_YEAR=$(echo $PAGE | awk -F'/' '{print $4}')
+      POST_MONTH=$(echo $PAGE | awk -F'/' '{print $5}')
+      POST_DAY=$(echo $PAGE| awk -F'/' '{print $6}')
+      printf "<tr class='blog_item'>"                   >> $BLOG_OUTPUT
+      printf "<td style='padding-right: .5em'>"         >> $BLOG_OUTPUT
+      printf "$POST_DAY/"         >> $BLOG_OUTPUT
+      printf "$POST_MONTH/"       >> $BLOG_OUTPUT
+      printf "$POST_YEAR"         >> $BLOG_OUTPUT
+      printf "</td><td><a href=\"$(echo $PAGE \
+        | sed 's/.\/public//')/\">"                     >> $BLOG_OUTPUT
+      printf "$(grep '<h1>' $PAGE/index.html \
+              | head -n 1 \
+              | sed -e 's/<h1>//' -e 's/<\/h1>/\n/' )"  >> $BLOG_OUTPUT
+      printf "</a></td>"                                >> $BLOG_OUTPUT
+      printf "</tr>"                                    >> $BLOG_OUTPUT
+    done
+
+    printf "</tbody></table>" >> $BLOG_OUTPUT
+  fi
+
+  cat ./pages/footer.html >> index.html
+  mv index.html public
+
 }
 
 build_rss() {
