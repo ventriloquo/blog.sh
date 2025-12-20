@@ -67,6 +67,15 @@ nav a {
   transition: all 300ms;
 }
 
+nav a[href^="http"] {
+  text-decoration: none;
+}
+
+nav a[href^="http"]::after {
+  content: "";
+}
+
+
 .nav_items {
   display: flex;
   flex-direction: row;
@@ -137,6 +146,15 @@ a {
   color: var(--accent);
 }
 
+a[href^="http"] {
+  text-decoration: underline;
+  text-underline-offset: .2em;
+}
+
+a[href^="http"]::after {
+  content: "\2197";
+}
+
 a:hover {
   opacity: 80%;
 }
@@ -162,19 +180,24 @@ pre code {
   display: block;
 }
 
-blockquote {
+q::before, q::after {
+  content: "";
+}
+
+blockquote, q {
   background-color: var(--grey);
   color: var(--accent);
   border-left: solid 5px var(--accent);
   padding: 10px 20px;
+  display: block;
 }
 
-blockquote > p > code {
+blockquote > p > code, q > p > code  {
   background-color: var(--accent);
   color: var(--background);
 }
 
-blockquote > pre {
+blockquote > pre, q > pre {
   margin-top: 10px;
   margin-bottom: 10px;
 }
@@ -198,8 +221,13 @@ h4:has(i) {
   margin-bottom: 2em;
 }
 
-h1 + p {
-  margin-bottom: -2em;
+h1 + p, h1 + h4 {
+  margin-top: -1em;
+}
+
+time {
+  color: var(--accent);
+  font-size: large;
 }
 
 img {
