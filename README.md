@@ -1,4 +1,4 @@
-<center><img src="assets/logo.webp"></center>
+<div style="text-align: center"><img src="assets/logo.webp"></div>
 
 # blog.sh
 
