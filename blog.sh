@@ -191,6 +191,7 @@ EOF
 
 for PAGE in $(ls -1d $POST_OUTPUT | sort -r | tr '\n' ' ')
 do
+  POST_URL=$(echo $PAGE | sed 's/\.\/public\/posts//')
   POST_YEAR=$(echo $PAGE | awk -F'/' '{print $4}')
   POST_MONTH=$(echo $PAGE | awk -F'/' '{print $5}')
   POST_DAY=$(echo $PAGE| awk -F'/' '{print $6}')
