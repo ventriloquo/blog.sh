@@ -259,6 +259,32 @@ article {
   min-height: 100vh;
 }
 
+table {
+  border-radius: 3px;
+  width: 100%;
+  margin: 1em auto;
+  text-align: left;
+  border: none;
+}
+
+.blog_item {
+  display: block;
+  transition: all 300ms;
+  margin-top: .8em;
+}
+
+.blog_item:hover {
+  padding: 1em;
+  background-color: var(--accent);
+  color: var(--background);
+}
+
+.blog_item:hover a {
+  color: var(--background);
+  text-decoration: underline;
+  text-underline-offset: .3em;
+}
+
 @view-transition {
   navigation: auto;
 }

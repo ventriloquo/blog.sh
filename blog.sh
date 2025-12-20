@@ -48,10 +48,10 @@ set -- https://neocities.org/site/tukainpng Neocities \
        https://github.com/ventriloquo Github
 
 # If the [URL NAME] pair is not complete, the link will not be visible
-[ -z "$1" ] || [ -z "$2" ]  && SITE_LINK_1_DISPLAY="display: none"
-[ -z "$3" ] || [ -z "$4" ]  && SITE_LINK_2_DISPLAY="display: none"
-[ -z "$5" ] || [ -z "$6" ]  && SITE_LINK_3_DISPLAY="display: none"
-[ -z "$7" ] || [ -z "$8" ]  && SITE_LINK_4_DISPLAY="display: none"
+[ -z "$1" ] || [ -z "$2" ]    && SITE_LINK_1_DISPLAY="display: none"
+[ -z "$3" ] || [ -z "$4" ]    && SITE_LINK_2_DISPLAY="display: none"
+[ -z "$5" ] || [ -z "$6" ]    && SITE_LINK_3_DISPLAY="display: none"
+[ -z "$7" ] || [ -z "$8" ]    && SITE_LINK_4_DISPLAY="display: none"
 [ -z "$9" ] || [ -z "${10}" ] && SITE_LINK_5_DISPLAY="display: none"
 
 cat << EOF > "pages/navbar.html"
@@ -132,24 +132,30 @@ build_site() {
   cat ./pages/head.html > blog.html
   cat ./pages/navbar.html >> blog.html
 
-  echo "<h2>Posts</h2>" >> blog.html
-  echo "<ul>" >> blog.html
+  printf "<h2>" >> blog.html
+  printf "Posts" >> blog.html
+  printf "<small style='margin-left: calc(100%% - 8.5ch)'>" >> blog.html
+  printf "<a href='/rss.xml'>RSS</a>" >> blog.html
+  printf "</small>" >> blog.html
+  printf "</h2>" >> blog.html
+  printf "<table><tbody>" >> blog.html
 
   for PAGE in $(ls -1 ./public/posts | sort -r | tr '\n' ' ')
   do
-    printf "<li>" >> blog.html
-    printf "<a href=\"/posts/$PAGE\">" >> blog.html
+    printf "<tr class='blog_item'>"                     >> blog.html
+    printf "<td style='padding-right: .5em'>"           >> blog.html
     printf "$(echo $PAGE | awk -F'-' '{print $3}')/"    >> blog.html
     printf "$(echo $PAGE | awk -F'-' '{print $2}')/"    >> blog.html
-    printf "$(echo $PAGE | awk -F'-' '{print $1}') - "  >> blog.html
+    printf "$(echo $PAGE | awk -F'-' '{print $1}')"     >> blog.html
+    printf "</td><td><a href=\"/posts/$PAGE\">"         >> blog.html
     printf "$(grep '<h1>' ./public/posts/"$PAGE" \
             | head -n 1 \
             | sed -e 's/<h1>//' -e 's/<\/h1>/\n/' )"    >> blog.html
-    printf "</a>" >> blog.html
-    printf "</li>" >> blog.html
+    printf "</a></td>" >> blog.html
+    printf "</tr>" >> blog.html
   done
 
-  echo "</ul>" >> blog.html
+  printf "</tbody></table>" >> blog.html
   cat ./pages/footer.html >> blog.html
   mv *.html public
   cp -r ./assets ./public
