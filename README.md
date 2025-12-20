@@ -1,4 +1,4 @@
-<center><img src="assets/logo.png"></center>
+<center><img style="height: 400px; width: 100%; object-fit: cover" src="assets/logo.png"></center>
 
 # blog.sh
 
