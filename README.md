@@ -1,3 +1,5 @@
+<center><img src="/assets/logo.png"></center>
+
 # blog.sh
 
 <p>A <s>simple</s> shitty Blog Generator writen in Posix Shell Script.</p>
