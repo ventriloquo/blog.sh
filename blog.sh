@@ -183,6 +183,9 @@ do
   echo "<id>$SITE_URL/$PAGE</id>" >> ./public/rss.xml
   echo "<pubDate>$(date '+%a, %d %b %Y %T GMT' --date=$(basename $PAGE .html \
                  | awk -F'-' '{print $1 "-" $2 "-" $3}'))</pubDate>" >> ./public/rss.xml
+  echo "<description>\
+    <![CDATA[$(cat ./public/posts/$PAGE | tail -n+54 | head -n-5)]]>\
+    </description>" >> ./public/rss.xml
   echo "</item>" >> ./public/rss.xml
 done
 
