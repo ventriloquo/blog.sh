@@ -249,7 +249,7 @@ footer {
   background-color: var(--grey);
 }
 
-article {
+main {
   max-width: 80ch;
   display: block;
   margin-left: auto;

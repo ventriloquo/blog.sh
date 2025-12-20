@@ -1,6 +1,7 @@
 #!/bin/sh
-
 INPUT=$1 # DON'T CHANGE THIS
+
+################################################################################
 
 SITE_NAME="foo"
 SITE_URL="https://foo.bar"
@@ -12,22 +13,25 @@ SITE_FAVICON_NAME="fav"
 SITE_FAVICON_TYPE="webp"
 BLOG_DIR="blog"
 CREATE_HOMEPAGE="true"
+CREATE_NAVBAR="true"
+CREATE_FOOTER="true"
 LATEST_POSTS_TEXT="Latest posts:"
 SOCIAL_LINKS="https://neocities.org/site/tukainpng Neocities \
               https://codeberg.org/tukain          Codeberg \
               https://github.com/ventriloquo       Github"
 
+################################################################################
+
 create_site() {
   command -v smu >/dev/null 2>&1 || {
-    printf "\033[31mERROR: smu is not installed!\033[0m\n"
-    printf "Please install it from: "
-    printf "\033[34mhttps://git.codemadness.org/smu/\033[0m\n"
+    printf "\033[31mERROR: smu is not installed!\033[0m
+
+Please install it from:
+\033[34mhttps://git.codemadness.org/smu/\033[0m\n"
     exit 1
   }
-  mkdir -p "content"
-  mkdir -p "assets"
-  mkdir -p "pages"
-  mkdir -p "public"
+
+  mkdir -p content assets pages public
   touch ".site"
   cat << EOF > "pages/head.html"
 <!DOCTYPE html>
@@ -49,10 +53,8 @@ create_site() {
 <body>
 EOF
 
-# Links list: [URL NAME]
+if [ "$CREATE_NAVBAR" = "true" ]; then
 set -- $SOCIAL_LINKS
-
-# If the [URL NAME] pair is not complete, the link will not be visible
 [ -z "$1" ] || [ -z "$2" ]    && SITE_LINK_1_DISPLAY="display: none"
 [ -z "$3" ] || [ -z "$4" ]    && SITE_LINK_2_DISPLAY="display: none"
 [ -z "$5" ] || [ -z "$6" ]    && SITE_LINK_3_DISPLAY="display: none"
@@ -95,17 +97,18 @@ cat << EOF > "pages/navbar.html"
 <a style="$SITE_LINK_5_DISPLAY" href="$9">${10}</a>
 </div>
 </header>
-<article>
 EOF
+fi
 
+if [ "$CREATE_FOOTER" = "true" ]; then
 cat << EOF > "pages/footer.html"
-</article>
 <footer>
 <p>Made with <a href="https://codeberg.org/tukain/blog.sh">blog.sh</a></p>
 </footer>
 </body>
 </html>
 EOF
+fi
 
 cat README.md > "content/1970-01-01-deleteme.md"
 
@@ -128,10 +131,12 @@ build_site() {
     mkdir -p $OUT_DIR
     cat ./pages/head.html         >  $OUT_FILE
     cat ./pages/navbar.html       >> $OUT_FILE
-    printf "<time>$POST_DAY/"     >> $OUT_FILE
-    printf "$POST_MONTH/"         >> $OUT_FILE
-    printf "$POST_YEAR</time>\n"  >> $OUT_FILE
+    printf "<main>
+            <time>
+    $POST_DAY/$POST_MONTH/$POST_YEAR
+            </time>"              >> $OUT_FILE
     smu ./content/"$FILE"         >> $OUT_FILE
+    printf "</main>"           >> $OUT_FILE
     cat ./pages/footer.html       >> $OUT_FILE
   done
 
@@ -140,74 +145,70 @@ build_site() {
   cat ./pages/head.html   > $BLOG_OUTPUT
   cat ./pages/navbar.html >> $BLOG_OUTPUT
 
-  printf "<h2>"                                             >> $BLOG_OUTPUT
-  printf "Posts"                                            >> $BLOG_OUTPUT
-  printf "<small style='margin-left: calc(100%% - 8.5ch)'>" >> $BLOG_OUTPUT
-  printf "<a href='/rss.xml'>RSS</a>"                       >> $BLOG_OUTPUT
-  printf "</small>"                                         >> $BLOG_OUTPUT
-  printf "</h2>"                                            >> $BLOG_OUTPUT
-  printf "<table><tbody>"                                   >> $BLOG_OUTPUT
+  printf "<h2>
+          Posts
+          <small style='margin-left: calc(100%% - 8.5ch)'>
+          <a href='/rss.xml'>RSS</a>
+          </small>
+          </h2>
+          <table>
+          <tbody>" >> $BLOG_OUTPUT
 
   POST_OUTPUT="./public/posts/*/*/*/*"
-  POST_URL="/posts$(echo $POST_OUTPUT | awk -F'./public/posts' '{print $2}' | xargs)"
   for PAGE in $(ls -1d $POST_OUTPUT | sort -r | tr '\n\:' ' ')
   do
     POST_YEAR=$(echo $PAGE | awk -F'/' '{print $4}')
     POST_MONTH=$(echo $PAGE | awk -F'/' '{print $5}')
     POST_DAY=$(echo $PAGE| awk -F'/' '{print $6}')
-    printf "<tr class='blog_item'>"                   >> $BLOG_OUTPUT
-    printf "<td style='padding-right: .5em'>"         >> $BLOG_OUTPUT
-    printf "$POST_DAY/"         >> $BLOG_OUTPUT
-    printf "$POST_MONTH/"       >> $BLOG_OUTPUT
-    printf "$POST_YEAR"         >> $BLOG_OUTPUT
-    printf "</td><td><a href=\"$(echo $PAGE \
-      | sed 's/.\/public//')/\">"                     >> $BLOG_OUTPUT
-    printf "$(grep '<h1>' $PAGE/index.html \
+    printf "<tr class='blog_item'>
+            <td style='padding-right: .5em'>
+            $POST_DAY/$POST_MONTH/$POST_YEAR
+            </td><td><a href=\"$(echo $PAGE \
+              | sed 's/.\/public//')/\">
+            $(grep '<h1>' $PAGE/index.html \
             | head -n 1 \
-            | sed -e 's/<h1>//' -e 's/<\/h1>/\n/' )"  >> $BLOG_OUTPUT
-    printf "</a></td>"                                >> $BLOG_OUTPUT
-    printf "</tr>"                                    >> $BLOG_OUTPUT
+            | sed -e 's/<h1>//' -e 's/<\/h1>/\n/' )
+            </a></td>
+            </tr>"          >> $BLOG_OUTPUT
   done
 
-  printf "</tbody></table>" >> $BLOG_OUTPUT
-  cat ./pages/footer.html >> $BLOG_OUTPUT
+  echo "</tbody></table>"   >> $BLOG_OUTPUT
+  cat ./pages/footer.html   >> $BLOG_OUTPUT
   mv $BLOG_DIR public
   cp -r ./assets ./public
 
   if [ "$CREATE_HOMEPAGE" = "true" ]; then
     cat ./pages/head.html > index.html
     cat ./pages/navbar.html >> index.html
-    echo "<h1>$SITE_NAME</h1>" >> index.html
+    echo "<main><h1>$SITE_NAME</h1>" >> index.html
     [ "$SITE_NOTE" ]        && echo "<h4><i>$SITE_NOTE</i></h4>"  >> index.html
     [ "$SITE_DESCRIPTION" ] && echo "<p>$SITE_DESCRIPTION</p>"    >> index.html
 
     BLOG_OUTPUT="index.html"
-    printf "<h3>$LATEST_POSTS_TEXT</h3>"                      >> $BLOG_OUTPUT
-    printf "<table><tbody>"                                   >> $BLOG_OUTPUT
-    POST_OUTPUT="./public/posts/*/*/*/*"
-    POST_URL="/posts$(echo $POST_OUTPUT | awk -F'./public/posts' '{print $2}' | xargs)"
+
+    printf "<h3>$LATEST_POSTS_TEXT</h3>
+            <table>
+            <tbody>" >> $BLOG_OUTPUT
+
     for PAGE in $(ls -1d $POST_OUTPUT | sort -r | head -n5 | tr '\n\:' ' ')
     do
-      POST_YEAR=$(echo $PAGE | awk -F'/' '{print $4}')
+      POST_YEAR=$( echo $PAGE | awk -F'/' '{print $4}')
       POST_MONTH=$(echo $PAGE | awk -F'/' '{print $5}')
-      POST_DAY=$(echo $PAGE| awk -F'/' '{print $6}')
-      printf "<tr class='blog_item'>"                   >> $BLOG_OUTPUT
-      printf "<td style='padding-right: .5em'>"         >> $BLOG_OUTPUT
-      printf "$POST_DAY/"         >> $BLOG_OUTPUT
-      printf "$POST_MONTH/"       >> $BLOG_OUTPUT
-      printf "$POST_YEAR"         >> $BLOG_OUTPUT
-      printf "</td><td><a href=\"$(echo $PAGE \
-        | sed 's/.\/public//')/\">"                     >> $BLOG_OUTPUT
-      printf "$(grep '<h1>' $PAGE/index.html \
+      POST_DAY=$(  echo $PAGE | awk -F'/' '{print $6}')
+      printf "<tr class='blog_item'><td style='padding-right: .5em'>
+              $POST_DAY/$POST_MONTH/$POST_YEAR
+              </td><td>
+              <a href=\"$(echo $PAGE | sed 's/.\/public//')/\">
+              $(grep '<h1>' $PAGE/index.html \
               | head -n 1 \
-              | sed -e 's/<h1>//' -e 's/<\/h1>/\n/' )"  >> $BLOG_OUTPUT
-      printf "</a></td>"                                >> $BLOG_OUTPUT
-      printf "</tr>"                                    >> $BLOG_OUTPUT
+              | sed -e 's/<h1>//' -e 's/<\/h1>/\n/')
+              </a></td></tr>" >> $BLOG_OUTPUT
     done
 
-    printf "</tbody></table>" >> $BLOG_OUTPUT
+    echo "</tbody></table>" >> $BLOG_OUTPUT
   fi
 
+  echo "</main>" >> index.html
   cat ./pages/footer.html >> index.html
   mv index.html public
 
@@ -230,21 +231,21 @@ do
   POST_YEAR=$(echo $PAGE | awk -F'/' '{print $4}')
   POST_MONTH=$(echo $PAGE | awk -F'/' '{print $5}')
   POST_DAY=$(echo $PAGE| awk -F'/' '{print $6}')
-  printf "<item>" >> ./public/rss.xml
-  printf "<title>$(grep '<h1>' $PAGE/index.html \
-               | tr '<>/' '\n' \
-               | head -n3 \
-               | tail -n1 )</title>" >> ./public/rss.xml
-  printf "<link>$SITE_URL$POST_URL/</link>" >> ./public/rss.xml
-  printf "<id>$SITE_URL$POST_URL/</id>" >> ./public/rss.xml
-  printf "<pubDate>" >> ./public/rss.xml
-  printf "$(date '+%a, %d %b %Y %T GMT' \
-    --date=$POST_YEAR-$POST_MONTH-$POST_DAY)" >> ./public/rss.xml
-  printf "</pubDate>" >> ./public/rss.xml
-  echo "<description>\
-    <![CDATA[$(cat $PAGE/index.html | tail -n+54 | head -n-5)]]>\
-    </description>" >> ./public/rss.xml
-  printf "</item>" >> ./public/rss.xml
+  printf "<item>
+          <title>$(grep '<h1>' $PAGE/index.html \
+                       | tr '<>/' '\n' \
+                       | head -n3 \
+                       | tail -n1 )</title>
+          <link>$SITE_URL$POST_URL/</link>
+          <id>$SITE_URL$POST_URL/</id>
+          <pubDate>
+          $(date '+%a, %d %b %Y %T GMT' \
+            --date=$POST_YEAR-$POST_MONTH-$POST_DAY)
+          </pubDate>
+          <description>
+            <![CDATA[$(cat $PAGE/index.html | tail -n+54 | head -n-5)]]>
+            </description>
+          </item>" >> ./public/rss.xml
 done
 
 cat << EOF >> ./public/rss.xml
@@ -255,7 +256,7 @@ EOF
 }
 
 version() {
-  printf "\033[32mblog.sh \033[34m(v0.0.2)\033[0m\n"
+  printf "\033[32mblog.sh \033[34m(v0.0.4)\033[0m\n"
 }
 
 case "$INPUT" in
