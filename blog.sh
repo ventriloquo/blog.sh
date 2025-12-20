@@ -154,6 +154,10 @@ build_site() {
   POST_URL="/posts$(echo $POST_OUTPUT | awk -F'./public/posts' '{print $2}' | xargs)"
   for PAGE in $(ls -1d $POST_OUTPUT | sort -r | tr '\n\:' ' ')
   do
+    echo $PAGE
+    POST_YEAR=$(echo $PAGE | awk -F'/' '{print $4}')
+    POST_MONTH=$(echo $PAGE | awk -F'/' '{print $5}')
+    POST_DAY=$(echo $PAGE| awk -F'/' '{print $6}')
     printf "<tr class='blog_item'>"                   >> $BLOG_OUTPUT
     printf "<td style='padding-right: .5em'>"         >> $BLOG_OUTPUT
     printf "$POST_DAY/"         >> $BLOG_OUTPUT
@@ -187,6 +191,9 @@ EOF
 
 for PAGE in $(ls -1d $POST_OUTPUT | sort -r | tr '\n' ' ')
 do
+  POST_YEAR=$(echo $PAGE | awk -F'/' '{print $4}')
+  POST_MONTH=$(echo $PAGE | awk -F'/' '{print $5}')
+  POST_DAY=$(echo $PAGE| awk -F'/' '{print $6}')
   printf "<item>" >> ./public/rss.xml
   printf "<title>$(grep '<h1>' $PAGE/index.html \
                | tr '<>/' '\n' \
