@@ -159,7 +159,8 @@ build_site() {
     printf "$POST_DAY/"         >> $BLOG_OUTPUT
     printf "$POST_MONTH/"       >> $BLOG_OUTPUT
     printf "$POST_YEAR"         >> $BLOG_OUTPUT
-    printf "</td><td><a href=\"$POST_URL/\">"         >> $BLOG_OUTPUT
+    printf "</td><td><a href=\"$(echo $PAGE \
+      | sed 's/.\/public//')/\">"                     >> $BLOG_OUTPUT
     printf "$(grep '<h1>' $PAGE/index.html \
             | head -n 1 \
             | sed -e 's/<h1>//' -e 's/<\/h1>/\n/' )"  >> $BLOG_OUTPUT
