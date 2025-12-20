@@ -28,6 +28,7 @@ create_site() {
   touch ".site"
   cat << EOF > "pages/head.html"
 <!DOCTYPE html>
+<html lang="$SITE_LANG">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <meta http-equiv="Content-Language" content="$SITE_LANG" />
@@ -102,6 +103,7 @@ cat << EOF > "pages/footer.html"
 <p>Made with <a href="https://codeberg.org/tukain/blog.sh">blog.sh</a></p>
 </footer>
 </body>
+</html>
 EOF
 
 cat README.md > "content/1970-01-01-deleteme.md"
