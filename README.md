@@ -41,7 +41,8 @@ the post.
 
 That's the funny part: you edit the source code.
 
-Don't worry, you just need to modify some variables and a `positional parameter`.
+Don't worry, you just need to modify some variables that are on the top of the
+script.
 
 The variables are:
 - `SITE_NAME`
@@ -55,21 +56,20 @@ The variables are:
 - `BLOG_DIR`
 - `CREATE_HOMEPAGE`
 - `LATEST_POSTS_TEXT`
+- `SOCIAL_LINKS`
 
 These are all a bunch of strings (as basically anything on shell-scripts), so
 modify then as you like it.
 
-And the `positional parameter` has this comment on top of if: `# Links list`.
+The `SOCIAL_LINKS` variable is written in the following format:
 
-> I'm using a `positional parameter` because Posix Shell's don't have no
-> arrays on then.
+    SOCIAL_LINKS="https://gnu.org/    Gnu \
+                  https://google.com/ Google"
 
-This links list is writen like this:
-
-    set -- https://google.com/ google
-
-It's like a `key:value` thing. First you put a URL, and then a NAME. These
+It's like a `key:value` thing. First you put a `URL`, and then a `NAME`. These
 links are shown on the navbar, use it to link your social media or something.
+
+> You can't create a `NAME` with spaces.
 
 ## smu syntax
 

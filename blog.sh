@@ -13,6 +13,9 @@ SITE_FAVICON_TYPE="webp"
 BLOG_DIR="blog"
 CREATE_HOMEPAGE="true"
 LATEST_POSTS_TEXT="Latest posts:"
+SOCIAL_LINKS="https://neocities.org/site/tukainpng Neocities \
+              https://codeberg.org/tukain          Codeberg \
+              https://github.com/ventriloquo       Github"
 
 create_site() {
   command -v smu >/dev/null 2>&1 || {
@@ -47,9 +50,7 @@ create_site() {
 EOF
 
 # Links list: [URL NAME]
-set -- https://neocities.org/site/tukainpng Neocities \
-       https://codeberg.org/tukain Codeberg \
-       https://github.com/ventriloquo Github
+set -- $SOCIAL_LINKS
 
 # If the [URL NAME] pair is not complete, the link will not be visible
 [ -z "$1" ] || [ -z "$2" ]    && SITE_LINK_1_DISPLAY="display: none"
