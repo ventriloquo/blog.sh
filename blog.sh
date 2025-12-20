@@ -98,13 +98,13 @@ build_site() {
 
   for FILE in $(ls ./content)
   do
-    cat ./pages/head.html                                   >  public/posts/"$(basename $FILE .md)".html
-    cat ./pages/navbar.html                                 >> public/posts/"$(basename $FILE .md)".html
-    printf "<time>$(echo $FILE | awk -F'-' '{print $3}')/"  >> public/posts/"$(basename $FILE .md)".html
-    printf "$(echo $FILE | awk -F'-' '{print $2}')/"        >> public/posts/"$(basename $FILE .md)".html
+    cat ./pages/head.html                                     >  public/posts/"$(basename $FILE .md)".html
+    cat ./pages/navbar.html                                   >> public/posts/"$(basename $FILE .md)".html
+    printf "<time>$(echo $FILE | awk -F'-' '{print $3}')/"    >> public/posts/"$(basename $FILE .md)".html
+    printf "$(echo $FILE | awk -F'-' '{print $2}')/"          >> public/posts/"$(basename $FILE .md)".html
     printf "$(echo $FILE | awk -F'-' '{print $1}')</time>\n"  >> public/posts/"$(basename $FILE .md)".html
-    smu ./content/"$FILE"                                   >> public/posts/"$(basename $FILE .md)".html
-    cat ./pages/footer.html                                 >> public/posts/"$(basename $FILE .md)".html
+    smu ./content/"$FILE"                                     >> public/posts/"$(basename $FILE .md)".html
+    cat ./pages/footer.html                                   >> public/posts/"$(basename $FILE .md)".html
   done
 
   cat ./pages/head.html > index.html
@@ -155,6 +155,7 @@ do
   echo "<title>$(grep '<h1>' ./public/posts/"$PAGE" | tr '<>/' '\n' | head -n3 | tail -n1 )</title>" >> ./public/rss.xml
   echo "<link>$SITE_URL/$PAGE</link>" >> ./public/rss.xml
   echo "<id>$SITE_URL/$PAGE</id>" >> ./public/rss.xml
+  echo "<pubDate>$(date '+%a, %d %b %Y %T GMT' --date=$(basename $PAGE .html | awk -F'-' '{print $1 "-" $2 "-" $3}'))</pubDate>" >> ./public/rss.xml
   echo "</item>" >> ./public/rss.xml
 done
 
