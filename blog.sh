@@ -98,10 +98,13 @@ build_site() {
 
   for FILE in $(ls ./content)
   do
-    cat ./pages/head.html   >  public/posts/"$FILE".html
-    cat ./pages/navbar.html >> public/posts/"$FILE".html
-    smu ./content/"$FILE"   >> public/posts/"$FILE".html
-    cat ./pages/footer.html >> public/posts/"$FILE".html
+    cat ./pages/head.html                                   >  public/posts/"$(basename $FILE .md)".html
+    cat ./pages/navbar.html                                 >> public/posts/"$(basename $FILE .md)".html
+    printf "<time>$(echo $FILE | awk -F'-' '{print $3}')/"  >> public/posts/"$(basename $FILE .md)".html
+    printf "$(echo $FILE | awk -F'-' '{print $2}')/"        >> public/posts/"$(basename $FILE .md)".html
+    printf "$(echo $FILE | awk -F'-' '{print $1}')</time>\n"  >> public/posts/"$(basename $FILE .md)".html
+    smu ./content/"$FILE"                                   >> public/posts/"$(basename $FILE .md)".html
+    cat ./pages/footer.html                                 >> public/posts/"$(basename $FILE .md)".html
   done
 
   cat ./pages/head.html > index.html
@@ -119,7 +122,14 @@ build_site() {
 
   for PAGE in $(ls -1 ./public/posts | sort -r | tr '\n' ' ')
   do
-    echo "<li><a href=\"/posts/$PAGE\">$(grep '<h1>' ./public/posts/"$PAGE" | tr '<>/' '\n' | head -n3 | tail -n1 )</a></li>" >> blog.html
+    printf "<li>" >> blog.html
+    printf "<a href=\"/posts/$PAGE\">" >> blog.html
+    printf "$(echo $PAGE | awk -F'-' '{print $3}')/" >> blog.html
+    printf "$(echo $PAGE | awk -F'-' '{print $2}')/" >> blog.html
+    printf "$(echo $PAGE | awk -F'-' '{print $1}') - " >> blog.html
+    printf "$(grep '<h1>' ./public/posts/"$PAGE" | head -n 1 | sed -e 's/<h1>//' -e 's/<\/h1>/\n/' )" >> blog.html
+    printf "</a>" >> blog.html
+    printf "</li>" >> blog.html
   done
 
   echo "</ul>" >> blog.html
