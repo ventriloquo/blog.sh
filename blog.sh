@@ -10,6 +10,7 @@ SITE_NOTE="You could've just used jekyll or Hugo, you know that, right?"
 SITE_DESCRIPTION="Here's a description. I know, pretty empty, eh?"
 SITE_FAVICON_NAME="fav"
 SITE_FAVICON_TYPE="webp"
+BLOG_DIR="blog"
 
 create_site() {
   command -v smu >/dev/null 2>&1 || {
@@ -68,7 +69,7 @@ cat << EOF > "pages/navbar.html"
 <a style="$SITE_LINK_5_DISPLAY" href="$9">${10}</a>
 </div>
 <div class="nav_items">
-<a href="/blog.html">Blog</a>
+<a href="/$BLOG_DIR">Blog</a>
 </div>
 <button
   popovertarget="nav_menu"
@@ -81,7 +82,7 @@ cat << EOF > "pages/navbar.html"
   color: var(--background);
   background-color: var(--accent);
   text-align: center"
-  href="/blog.html">Blog</a>
+  href="/$BLOG_DIR">Blog</a>
 <hr style="border-color: var(--accent)">
 <a style="$SITE_LINK_1_DISPLAY" href="$1">$2</a>
 <a style="$SITE_LINK_2_DISPLAY" href="$3">$4</a>
@@ -112,14 +113,21 @@ build_site() {
 
   for FILE in $(ls ./content)
   do
-    OUT_FILE="public/posts/$(basename $FILE .md).html"
-    cat ./pages/head.html                                     >  $OUT_FILE
-    cat ./pages/navbar.html                                   >> $OUT_FILE
-    printf "<time>$(echo $FILE | awk -F'-' '{print $3}')/"    >> $OUT_FILE
-    printf "$(echo $FILE | awk -F'-' '{print $2}')/"          >> $OUT_FILE
-    printf "$(echo $FILE | awk -F'-' '{print $1}')</time>\n"  >> $OUT_FILE
-    smu ./content/"$FILE"                                     >> $OUT_FILE
-    cat ./pages/footer.html                                   >> $OUT_FILE
+    POST_YEAR=$(echo $FILE  | awk -F'-' '{print $1}')
+    POST_MONTH=$(echo $FILE | awk -F'-' '{print $2}')
+    POST_DAY=$(echo $FILE   | awk -F'-' '{print $3}')
+    OUT_DIR_BASENAME=$(basename $(echo $FILE \
+      | awk -F'[0-9]{4}-[0-9]{2}-[0-9]{2}-' '{print $2}') .md)
+    OUT_DIR="public/posts/$POST_YEAR/$POST_MONTH/$POST_DAY/$OUT_DIR_BASENAME"
+    OUT_FILE="$OUT_DIR/index.html"
+    mkdir -p $OUT_DIR
+    cat ./pages/head.html         >  $OUT_FILE
+    cat ./pages/navbar.html       >> $OUT_FILE
+    printf "<time>$POST_DAY/"     >> $OUT_FILE
+    printf "$POST_MONTH/"         >> $OUT_FILE
+    printf "$POST_YEAR</time>\n"  >> $OUT_FILE
+    smu ./content/"$FILE"         >> $OUT_FILE
+    cat ./pages/footer.html       >> $OUT_FILE
   done
 
   cat ./pages/head.html > index.html
@@ -129,35 +137,39 @@ build_site() {
   [ "$SITE_DESCRIPTION" ] && echo "<p>$SITE_DESCRIPTION</p>"    >> index.html
   cat ./pages/footer.html >> index.html
 
-  cat ./pages/head.html > blog.html
-  cat ./pages/navbar.html >> blog.html
+  BLOG_OUTPUT="$BLOG_DIR/index.html"
+  mkdir -p $BLOG_DIR
+  cat ./pages/head.html   > $BLOG_OUTPUT
+  cat ./pages/navbar.html >> $BLOG_OUTPUT
 
-  printf "<h2>" >> blog.html
-  printf "Posts" >> blog.html
-  printf "<small style='margin-left: calc(100%% - 8.5ch)'>" >> blog.html
-  printf "<a href='/rss.xml'>RSS</a>" >> blog.html
-  printf "</small>" >> blog.html
-  printf "</h2>" >> blog.html
-  printf "<table><tbody>" >> blog.html
+  printf "<h2>"                                             >> $BLOG_OUTPUT
+  printf "Posts"                                            >> $BLOG_OUTPUT
+  printf "<small style='margin-left: calc(100%% - 8.5ch)'>" >> $BLOG_OUTPUT
+  printf "<a href='/rss.xml'>RSS</a>"                       >> $BLOG_OUTPUT
+  printf "</small>"                                         >> $BLOG_OUTPUT
+  printf "</h2>"                                            >> $BLOG_OUTPUT
+  printf "<table><tbody>"                                   >> $BLOG_OUTPUT
 
-  for PAGE in $(ls -1 ./public/posts | sort -r | tr '\n' ' ')
+  POST_OUTPUT="./public/posts/*/*/*/*"
+  POST_URL="/posts$(echo $POST_OUTPUT | awk -F'./public/posts' '{print $2}' | xargs)"
+  for PAGE in $(ls -1d $POST_OUTPUT | sort -r | tr '\n\:' ' ')
   do
-    printf "<tr class='blog_item'>"                     >> blog.html
-    printf "<td style='padding-right: .5em'>"           >> blog.html
-    printf "$(echo $PAGE | awk -F'-' '{print $3}')/"    >> blog.html
-    printf "$(echo $PAGE | awk -F'-' '{print $2}')/"    >> blog.html
-    printf "$(echo $PAGE | awk -F'-' '{print $1}')"     >> blog.html
-    printf "</td><td><a href=\"/posts/$PAGE\">"         >> blog.html
-    printf "$(grep '<h1>' ./public/posts/"$PAGE" \
+    printf "<tr class='blog_item'>"                   >> $BLOG_OUTPUT
+    printf "<td style='padding-right: .5em'>"         >> $BLOG_OUTPUT
+    printf "$POST_DAY/"         >> $BLOG_OUTPUT
+    printf "$POST_MONTH/"       >> $BLOG_OUTPUT
+    printf "$POST_YEAR"         >> $BLOG_OUTPUT
+    printf "</td><td><a href=\"$POST_URL/\">"         >> $BLOG_OUTPUT
+    printf "$(grep '<h1>' $PAGE/index.html \
             | head -n 1 \
-            | sed -e 's/<h1>//' -e 's/<\/h1>/\n/' )"    >> blog.html
-    printf "</a></td>" >> blog.html
-    printf "</tr>" >> blog.html
+            | sed -e 's/<h1>//' -e 's/<\/h1>/\n/' )"  >> $BLOG_OUTPUT
+    printf "</a></td>"                                >> $BLOG_OUTPUT
+    printf "</tr>"                                    >> $BLOG_OUTPUT
   done
 
-  printf "</tbody></table>" >> blog.html
-  cat ./pages/footer.html >> blog.html
-  mv *.html public
+  printf "</tbody></table>" >> $BLOG_OUTPUT
+  cat ./pages/footer.html >> $BLOG_OUTPUT
+  mv *.html $BLOG_DIR public
   cp -r ./assets ./public
 }
 
@@ -172,21 +184,23 @@ cat << EOF > ./public/rss.xml
 <description>$SITE_DESCRIPTION</description>
 EOF
 
-for PAGE in $(ls -1 ./public/posts | sort -r | tr '\n' ' ')
+for PAGE in $(ls -1d $POST_OUTPUT | sort -r | tr '\n' ' ')
 do
-  echo "<item>" >> ./public/rss.xml
-  echo "<title>$(grep '<h1>' ./public/posts/"$PAGE" \
+  printf "<item>" >> ./public/rss.xml
+  printf "<title>$(grep '<h1>' $PAGE/index.html \
                | tr '<>/' '\n' \
                | head -n3 \
                | tail -n1 )</title>" >> ./public/rss.xml
-  echo "<link>$SITE_URL/$PAGE</link>" >> ./public/rss.xml
-  echo "<id>$SITE_URL/$PAGE</id>" >> ./public/rss.xml
-  echo "<pubDate>$(date '+%a, %d %b %Y %T GMT' --date=$(basename $PAGE .html \
-                 | awk -F'-' '{print $1 "-" $2 "-" $3}'))</pubDate>" >> ./public/rss.xml
+  printf "<link>$SITE_URL$POST_URL/</link>" >> ./public/rss.xml
+  printf "<id>$SITE_URL$POST_URL/</id>" >> ./public/rss.xml
+  printf "<pubDate>" >> ./public/rss.xml
+  printf "$(date '+%a, %d %b %Y %T GMT' \
+    --date=$POST_YEAR-$POST_MONTH-$POST_DAY)" >> ./public/rss.xml
+  printf "</pubDate>" >> ./public/rss.xml
   echo "<description>\
-    <![CDATA[$(cat ./public/posts/$PAGE | tail -n+54 | head -n-5)]]>\
+    <![CDATA[$(cat $PAGE/index.html | tail -n+54 | head -n-5)]]>\
     </description>" >> ./public/rss.xml
-  echo "</item>" >> ./public/rss.xml
+  printf "</item>" >> ./public/rss.xml
 done
 
 cat << EOF >> ./public/rss.xml
