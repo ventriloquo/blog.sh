@@ -229,7 +229,7 @@ do
   POST_YEAR=$(echo $PAGE | awk -F'/' '{print $4}')
   POST_MONTH=$(echo $PAGE | awk -F'/' '{print $5}')
   POST_DAY=$(echo $PAGE| awk -F'/' '{print $6}')
-  printf "<item>
+  echo "<item>
           <title>$(grep '<h1>' $PAGE/index.html \
                        | tr '<>/' '\n' \
                        | head -n3 \
