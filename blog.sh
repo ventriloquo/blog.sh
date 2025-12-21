@@ -145,10 +145,8 @@ build_site() {
   cat ./pages/head.html   > $BLOG_OUTPUT
   cat ./pages/navbar.html >> $BLOG_OUTPUT
 
-  printf "<h2>
-          Posts
-          <small style='margin-left: calc(100%% - 8.5ch)'>
-          <a href='/rss.xml'>RSS</a>
+  printf "<main>
+          <h2>Posts<small style='margin-left: calc(100%% - 8.5ch)'><a href='/rss.xml'>RSS</a>
           </small>
           </h2>
           <table>
@@ -172,7 +170,7 @@ build_site() {
             </tr>"          >> $BLOG_OUTPUT
   done
 
-  echo "</tbody></table>"   >> $BLOG_OUTPUT
+  echo "</tbody></table></main>"   >> $BLOG_OUTPUT
   cat ./pages/footer.html   >> $BLOG_OUTPUT
   mv $BLOG_DIR public
   cp -r ./assets ./public
