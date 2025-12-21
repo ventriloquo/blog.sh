@@ -235,7 +235,7 @@ do
                        | head -n3 \
                        | tail -n1 )</title>
           <link>$SITE_URL$POST_URL/</link>
-          <id>$SITE_URL$POST_URL/</id>
+          <guid>$SITE_URL$POST_URL/</guid>
           <pubDate>
           $(date '+%a, %d %b %Y %T GMT' \
             --date=$POST_YEAR-$POST_MONTH-$POST_DAY)
