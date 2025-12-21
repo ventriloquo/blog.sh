@@ -225,17 +225,17 @@ EOF
 
 for PAGE in $(ls -1d $POST_OUTPUT | sort -r | tr '\n' ' ')
 do
-  POST_URL=$(echo $PAGE | sed 's/\.\/public\/posts//')
+  POST_URL=$(echo $PAGE | sed 's/\.\/public\/posts\///')
   POST_YEAR=$(echo $PAGE | awk -F'/' '{print $4}')
   POST_MONTH=$(echo $PAGE | awk -F'/' '{print $5}')
   POST_DAY=$(echo $PAGE| awk -F'/' '{print $6}')
   echo "<item>
-          <title>$(grep '<h1>' $PAGE/index.html \
+          <title>$(grep "<h1>" $PAGE/index.html \
                        | tr '<>/' '\n' \
-                       | head -n3 \
+                       | head -n6 \
                        | tail -n1 )</title>
-          <link>$SITE_URL$POST_URL/</link>
-          <guid>$SITE_URL$POST_URL/</guid>
+          <link>$SITE_URL/posts/$POST_URL/</link>
+          <guid>$SITE_URL/posts/$POST_URL/</guid>
           <pubDate>
           $(date '+%a, %d %b %Y %T GMT' \
             --date=$POST_YEAR-$POST_MONTH-$POST_DAY)
