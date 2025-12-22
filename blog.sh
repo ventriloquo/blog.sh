@@ -85,8 +85,7 @@ cat << EOF > "pages/navbar.html"
 <div popover="" id="nav_menu">
 <a style="margin: 0;
   padding: 10px 20px;
-  color: var(--background);
-  background-color: var(--accent);
+  margin: .5em 0;
   text-align: center"
   href="/$BLOG_DIR">Blog</a>
 <hr style="border-color: var(--accent)">
