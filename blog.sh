@@ -128,15 +128,15 @@ build_site() {
     OUT_DIR="public/posts/$POST_YEAR/$POST_MONTH/$POST_DAY/$OUT_DIR_BASENAME"
     OUT_FILE="$OUT_DIR/index.html"
     mkdir -p $OUT_DIR
-    cat ./pages/head.html         >  $OUT_FILE
-    cat ./pages/navbar.html       >> $OUT_FILE
+    cat ./pages/head.html   >  $OUT_FILE
+    cat ./pages/navbar.html >> $OUT_FILE
     printf "<main>
             <time>
     $POST_DAY/$POST_MONTH/$POST_YEAR
-            </time>"              >> $OUT_FILE
-    smu ./content/"$FILE"         >> $OUT_FILE
-    printf "</main>"           >> $OUT_FILE
-    cat ./pages/footer.html       >> $OUT_FILE
+            </time>"        >> $OUT_FILE
+    smu ./content/"$FILE" | sed 's/<a /<a target="_blank" /g' >> $OUT_FILE
+    printf "</main>"        >> $OUT_FILE
+    cat ./pages/footer.html >> $OUT_FILE
   done
 
   BLOG_OUTPUT="$BLOG_DIR/index.html"
