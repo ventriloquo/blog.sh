@@ -114,7 +114,14 @@ cat README.md > "content/1970-01-01-deleteme.md"
 }
 
 build_site() {
+  [ ! -f "./pages/head.html" ] && \
+    echo "\033[31mERROR:\033[0m There's no \"head.html\" on the \"pages\" directory!" && \
+    echo "Please, run the command \"./blog.sh create\" to make a default \"head.html\"" && \
+    exit 1
+  [ ! -f "./pages/navbar.html" ] && echo "\033[33mWARNING:\033[0m There's no \"navbar.html\" on the \"pages\" directory!"
+  [ ! -f "./pages/footer.html" ] && echo "\033[33mWARNING:\033[0m There's no \"footer.html\" on the \"pages\" directory!"
   [ ! -f ".site" ] && echo "You're not inside the site directory!" && exit 1
+
   rm -rf ./public
   mkdir -p public/posts
 
