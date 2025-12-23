@@ -13,6 +13,7 @@ SITE_FAVICON_NAME="fav"
 SITE_FAVICON_TYPE="webp"
 BLOG_DIR="blog"
 CREATE_HOMEPAGE="true"
+CREATE_404="true"
 CREATE_NAVBAR="true"
 CREATE_FOOTER="true"
 LATEST_POSTS_TEXT="Latest posts:"
@@ -213,6 +214,28 @@ build_site() {
   echo "</main>" >> index.html
   cat ./pages/footer.html >> index.html
   mv index.html public
+
+  if [ "$CREATE_404" = "true" ]; then
+    cat ./pages/head.html > public/404.html
+    cat ./pages/head.html > public/not_found.html
+    [ -f "./pages/navbar.html" ] && cat ./pages/navbar.html >> public/404.html
+    [ -f "./pages/navbar.html" ] && cat ./pages/navbar.html >> public/not_found.html
+
+    echo "
+    <main>
+      <h1>404</h1>
+      <h4>Not Found</h4>
+    </main>" >> public/404.html
+
+    echo "
+    <main>
+      <h1>404</h1>
+      <h4>Not Found</h4>
+    </main>" >> public/not_found.html
+
+    [ -f "./pages/footer.html" ] && cat ./pages/footer.html >> public/404.html
+    [ -f "./pages/footer.html" ] && cat ./pages/footer.html >> public/not_found.html
+  fi
 
 }
 
