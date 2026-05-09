@@ -66,7 +66,7 @@ cat << EOF > "pages/navbar.html"
 <header>
 <nav>
 <div class="home_link">
-<a class="text" href="/">Início</a>
+<a class="text" href="/">Home</a>
 </div>
 <div id="nav_list" class="nav_items">
 <a style="$SITE_LINK_1_DISPLAY" href="$1">$2</a>
@@ -84,17 +84,23 @@ cat << EOF > "pages/navbar.html"
   class="nav_menu">Menu</button>
 </nav>
 <div popover="" id="nav_menu">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; border: solid .1em var(--grey)">
 <a style="margin: 0;
-  padding: 10px 20px;
-  margin: .5em 0;
+  padding: 1em;
+  text-align: center"
+  href="/">Home</a>
+<a style="margin: 0;
+  padding: 1em;
   text-align: center"
   href="/$BLOG_DIR">Blog</a>
-<hr style="border-color: var(--accent)">
+</div>
+<div style="display: flex; flex-wrap: wrap; flex-direction: column; align-items: center; margin-top: .3em; border: solid .1em var(--grey);">
 <a style="$SITE_LINK_1_DISPLAY" href="$1">$2</a>
 <a style="$SITE_LINK_2_DISPLAY" href="$3">$4</a>
 <a style="$SITE_LINK_3_DISPLAY" href="$5">$6</a>
 <a style="$SITE_LINK_4_DISPLAY" href="$7">$8</a>
 <a style="$SITE_LINK_5_DISPLAY" href="$9">${10}</a>
+</div>
 </div>
 </header>
 EOF
@@ -110,7 +116,7 @@ cat << EOF > "pages/footer.html"
 EOF
 fi
 
-cat README.md > "content/1970-01-01-deleteme.md"
+cat README.md | sed "s/assets\/landscape/\/assets\/landscape/g" > "content/1970-01-01-deleteme.md"
 
 }
 
@@ -151,11 +157,10 @@ build_site() {
   cat ./pages/navbar.html >> $BLOG_OUTPUT
 
   printf "<main>
-          <h2>Posts<small style='margin-left: calc(100%% - 8.5ch)'><a href='/rss.xml'>RSS</a>
-          </small>
-          </h2>
-          <table>
-          <tbody>" >> $BLOG_OUTPUT
+	  <div style='display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; border-bottom: solid .1em var(--grey)'>
+            <h2>Posts</h2><a href='/rss.xml'>RSS</a>
+	  </div>
+          <ul>" >> $BLOG_OUTPUT
 
   POST_OUTPUT="./public/posts/*/*/*/*"
   for PAGE in $(ls -1d $POST_OUTPUT | sort -r | tr '\n\:' ' ')
@@ -163,19 +168,19 @@ build_site() {
     POST_YEAR=$(echo $PAGE | awk -F'/' '{print $4}')
     POST_MONTH=$(echo $PAGE | awk -F'/' '{print $5}')
     POST_DAY=$(echo $PAGE| awk -F'/' '{print $6}')
-    printf "<tr class='blog_item'>
-            <td style='padding-right: .5em'>
-            $POST_DAY/$POST_MONTH/$POST_YEAR
-            </td><td><a href=\"$(echo $PAGE \
-              | sed 's/.\/public//')/\">
+    printf "<li>
+	    <a class='blog_entry button' href=\"$(echo $PAGE \
+              | sed 's/.\/public//')/\"><span>
+            $POST_DAY/$POST_MONTH/$POST_YEAR -
+            </span>
             $(grep '<h1>' $PAGE/index.html \
             | head -n 1 \
             | sed -e 's/<h1>//' -e 's/<\/h1>/\n/' )
-            </a></td>
-            </tr>"          >> $BLOG_OUTPUT
+            </a>
+            </li>"          >> $BLOG_OUTPUT
   done
 
-  echo "</tbody></table></main>"   >> $BLOG_OUTPUT
+  echo "</ul></main>"   >> $BLOG_OUTPUT
   cat ./pages/footer.html   >> $BLOG_OUTPUT
   mv $BLOG_DIR public
   cp -r ./assets ./public
@@ -190,25 +195,24 @@ build_site() {
     BLOG_OUTPUT="index.html"
 
     printf "<h3>$LATEST_POSTS_TEXT</h3>
-            <table>
-            <tbody>" >> $BLOG_OUTPUT
+            <ul>" >> $BLOG_OUTPUT
 
     for PAGE in $(ls -1d $POST_OUTPUT | sort -r | head -n5 | tr '\n\:' ' ')
     do
       POST_YEAR=$( echo $PAGE | awk -F'/' '{print $4}')
       POST_MONTH=$(echo $PAGE | awk -F'/' '{print $5}')
       POST_DAY=$(  echo $PAGE | awk -F'/' '{print $6}')
-      printf "<tr class='blog_item'><td style='padding-right: .5em'>
-              $POST_DAY/$POST_MONTH/$POST_YEAR
-              </td><td>
-              <a href=\"$(echo $PAGE | sed 's/.\/public//')/\">
+      printf "<li>
+              <a class='blog_entry button' href=\"$(echo $PAGE | sed 's/.\/public//')/\">
+              $POST_DAY/$POST_MONTH/$POST_YEAR -
               $(grep '<h1>' $PAGE/index.html \
               | head -n 1 \
               | sed -e 's/<h1>//' -e 's/<\/h1>/\n/')
-              </a></td></tr>" >> $BLOG_OUTPUT
+              </a>
+	      </li>" >> $BLOG_OUTPUT
     done
 
-    echo "</tbody></table>" >> $BLOG_OUTPUT
+    echo "</ul>" >> $BLOG_OUTPUT
   fi
 
   echo "</main>" >> index.html
