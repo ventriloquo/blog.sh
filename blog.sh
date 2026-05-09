@@ -3,7 +3,7 @@ INPUT=$1 # DON'T CHANGE THIS
 
 ################################################################################
 
-SITE_NAME="foo"
+SITE_NAME="Foo Bar"
 SITE_URL="https://foo.bar"
 SITE_LANG="en-us"
 SITE_AUTHOR="bar"
@@ -157,7 +157,7 @@ build_site() {
   cat ./pages/navbar.html >> $BLOG_OUTPUT
 
   printf "<main>
-	  <div style='display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; border-bottom: solid .1em var(--grey)'>
+	  <div style='display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;'>
             <h2>Posts</h2><a href='/rss.xml'>RSS</a>
 	  </div>
           <ul>" >> $BLOG_OUTPUT

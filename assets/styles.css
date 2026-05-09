@@ -16,7 +16,7 @@
     --background: #fbf1c7;
     --foreground: #3c3836;
     --grey:       #ebdbb2;
-    --accent:     #98971a;
+    --accent:     #458588;
   }
 }
 
@@ -202,7 +202,7 @@ p, hr, ul, ol {
   list-style-position: inside;
 }
 
-h1, h4 {
+h1, h2, h3, h4 {
   margin-top: 0.5em;
   margin-bottom: 0.5em;
 }
@@ -217,7 +217,7 @@ h1 + p, h1 + h4 {
 
 time {
   color: var(--accent);
-  font-size: large;
+  font-size: x-large;
 }
 
 img {
