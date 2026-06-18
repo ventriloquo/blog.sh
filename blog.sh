@@ -679,7 +679,7 @@ new_post() {
 }
 
 version() {
-  printf "\033[32mblog.sh \033[34m(v0.0.5)\033[0m\n"
+  printf "\033[32mblog.sh \033[34m(v0.0.5R2)\033[0m\n"
 }
 
 case "$INPUT" in
