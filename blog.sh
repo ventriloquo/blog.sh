@@ -16,8 +16,6 @@ SITE_FAVICON_NAME="fav"
 SITE_FAVICON_TYPE="webp"
 BLOG_DIR="log"
 USE_DEFAULT_CSS="true"
-CREATE_HOMEPAGE="true"
-CREATE_404="true"
 CREATE_NAVBAR="true"
 CREATE_FOOTER="true"
 LATEST_POSTS_TEXT="Latest posts:"
@@ -403,7 +401,7 @@ li:has(.blog_entry) {
       margin-bottom: .8px; /* WTF? */
     }
   }
-  
+
   &:first-child .button {
     margin-top: 10px;
     border-start-start-radius: 5px;
@@ -555,7 +553,7 @@ local IFS="OLD_IFS"
 }
 
 create_capsule() {
-  cp -r assets public
+  [ -d "assets" ] && cp -r assets public
 
 set -- $SOCIAL_LINKS
 [ -z "$1" ] || [ -z "$2" ]    && SITE_LINK_1_DISPLAY="display: none"
@@ -568,6 +566,20 @@ set -- $SOCIAL_LINKS
 # $SITE_NAME
 ## $SITE_NOTE
 $SITE_DESCRIPTION
+
+$([ "$LATEST_POSTS_TEXT" ] && echo "## $LATEST_POSTS_TEXT")
+```
+if [ "$LATEST_POSTS_TEXT" ]; then
+  for FILE in $(ls -1 content | head -n5 | sort -r);
+  do
+    post_dates
+    printf "=> /log/posts/$POST_YEAR/$POST_MONTH/$POST_DAY/$(slug_basename) "
+    printf "($POST_DAY/$POST_MONTH/$POST_YEAR)\t"
+    printf "$(basename "$(echo $FILE | awk -F'[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9]{2}-' '{print $2}' | tr '-' ' ')" .gmi)"
+    printf "\n"
+  done
+fi
+```
 
 $([ "$SOCIAL_LINKS" ] && echo "## Social Media")
 => $1 $2
