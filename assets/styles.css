@@ -128,6 +128,7 @@ nav a:hover {
 
 li {
   line-height: 2.0;
+  list-style-position: inside;
 }
 
 p {
@@ -172,6 +173,25 @@ pre, code {
 pre code {
   overflow-x: scroll;
   display: block;
+}
+
+li + br,
+li + br + br,
+.blog_entry + br,
+.blog_entry + br + br,
+br:has(+ li),
+h1 + br,
+h1 + br + br,
+h2 + br,
+h2 + br + br,
+h3 + br,
+h3 + br + br,
+pre > br {
+  display: none !important;
+}
+
+pre {
+  margin-bottom: 1em;
 }
 
 q::before, q::after {

@@ -1,0 +1,117 @@
+# blog.sh
+
+A shitty Blog Generator writen in Posix Shell Script.
+
+## Dependencies
+* A POSIX-complient shell (like Ash, Dash, etc).
+* That's it.
+
+## How to use
+
+To create a site, just type:
+
+```
+./blog.sh create
+```
+
+This will create the directory structure used by blog.sh with the default layout (if you don't change any of the script variables), "build" the website and put it's files on the public directory.
+
+The posts are located in the content directory, the names of each files needs to be like the following:
+
+```
+1970-01-01-00-title.gmi
+1991-07-03-00-title.gmi
+1996-10-01-00-title.gmi
+2003-11-06-00-title.gmi
+2004-10-20-00-title.gmi
+```
+
+They are organized from higher to lower number, that is, `1991-07-04-00-title` will be placed above `1991-07-03-00-title`.
+
+> This YEAR-MONTH-DAY-COUNT-TITLE format is used to create directories and sub-directories on witch the posts are stored. So it's possible to have multiple posts made on the same day, as long as the title is different. Also, if any of the fields are missing, something will definily break.
+
+## How do i configure this thing?
+
+You edit the source code.
+
+Don't worry, you just need to modify some variables that are on the top of the script.
+
+The variables are:
+* SITE_NAME
+* SITE_URL
+* SITE_LANG
+* SITE_AUTHOR
+* SITE_NOTE
+* SITE_DESCRIPTION
+* SITE_FAVICON_NAME
+* SITE_FAVICON_TYPE
+* BLOG_DIR
+* CREATE_HOMEPAGE
+* CREATE_NAVBAR
+* CREATE_FOOTER
+* LATEST_POSTS_TEXT
+* SOCIAL_LINKS
+ 
+These are all a bunch of strings (as basically anything on shell-scripts), so modify then as you like it.
+
+The SOCIAL_LINKS variable is written in the following format:
+
+```
+SOCIAL_LINKS="https://gnu.org/    Gnu \
+              https://google.com/ Google"
+```
+
+It's like a key:value thing. First you put a URL, and then a NAME. These links are shown on the navbar, use it to link your social media or something.
+
+> You can't create a NAME with spaces.
+
+## Syntax
+
+Wellll... If you have already used Markdown, then you are at home...
+But not quite.
+
+This script uses Gemtext as it's document syntax (as you already could presume because of the .gmi file extension)
+
+Things like headings,
+```
+ # Works almost
+ ## Exactly like
+ ### Markdown
+```
+
+Lists,
+```
+ * also
+ * works
+ * the
+ * same
+ * but with "*"
+```
+
+Quotes,
+```
+ > As if this is markdown
+```
+
+And code blocks too.
+```
+ ```
+ echo "Hello, Gordon!"
+ ```
+```
+
+
+### Things that are diferent from Markdown
+
+There's not inline formating (like **bold text**), so anything fancy like that will be outputed as is.
+
+Buuuut, HTML tags aren't escaped, so you can just use one if you want to, <b><i>like this</i></b>.
+
+This also means that you need to use those strange af HTML escape sequences, like &g<span>t;</span> to output a > inside a code-block.
+
+## Why have you brought this upon this cursed land?
+
+* First of all: because I can, and I'm a idiot.
+* Second: I really liked my experience of using Org-mode's "export to HTML" feature. It's basically a SSG, a basic one, but still one.  So I wanted to create my own, one that is just focused on blog creation (so it's easier to write) and that was as much portable as it could get.
+ 
+And here it is, a shitty SSG that takes whatever the hell is on content directory and throws a bunch of HTML out of it.
