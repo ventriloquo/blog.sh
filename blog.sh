@@ -575,8 +575,7 @@ if [ "$LATEST_POSTS_TEXT" ]; then
     post_dates
     printf "=> /log/posts/$POST_YEAR/$POST_MONTH/$POST_DAY/$(slug_basename) "
     printf "($POST_DAY/$POST_MONTH/$POST_YEAR)\t"
-    printf "$(basename "$(echo $FILE | awk -F'[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9]{2}-' '{print $2}' | tr '-' ' ')" .gmi)"
-    printf "\n"
+    printf "$(basename "$(echo $FILE | awk -F'[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9]{2}-' '{print $2}' | tr '-' ' ')" .gmi)\n"
   done
 fi
 ```
